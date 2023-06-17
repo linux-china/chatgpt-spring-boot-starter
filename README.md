@@ -108,9 +108,9 @@ public class ChatGPTServiceImplTest {
 
 # Tech Stack
 
-* Spring Boot 3.0+
-* Spring Boot Webflux
-* Spring HTTP interface
+* [Spring Boot 3.0+](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+* [Spring Boot Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)
+* [Spring HTTP interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface)
 
 # References
 
