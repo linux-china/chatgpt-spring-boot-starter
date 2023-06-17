@@ -8,6 +8,9 @@ import java.util.List;
 
 public class ChatCompletionResponse {
     private String id;
+    private String model;
+    private Long created;
+    private String object;
     private ChatCompletionUsage usage;
     private List<ChatCompletionChoice> choices;
 
@@ -33,6 +36,30 @@ public class ChatCompletionResponse {
 
     public void setChoices(List<ChatCompletionChoice> choices) {
         this.choices = choices;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public Long getCreated() {
+        return created;
+    }
+
+    public void setCreated(Long created) {
+        this.created = created;
+    }
+
+    public String getObject() {
+        return object;
+    }
+
+    public void setObject(String object) {
+        this.object = object;
     }
 
     @JsonIgnore
