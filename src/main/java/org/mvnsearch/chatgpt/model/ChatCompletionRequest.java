@@ -17,9 +17,9 @@ public class ChatCompletionRequest {
     private Double temperature;
     private Integer n;
     @JsonProperty("top_p")
-    private Integer topP;
+    private Double topP;
     private Boolean stream;
-    private String stop;
+    private List<String> stop;
     @JsonProperty("max_tokens")
     private Integer maxTokens;
     @JsonProperty("presence_penalty")
@@ -27,7 +27,7 @@ public class ChatCompletionRequest {
     @JsonProperty("frequency_penalty")
     private Double frequencyPenalty;
     @JsonProperty("logit_bias")
-    private Map<String, Object> logitBias;
+    private Map<String, Integer> logitBias;
     private String user;
 
     /**
@@ -75,11 +75,11 @@ public class ChatCompletionRequest {
         this.messages = messages;
     }
 
-    public Integer getTopP() {
+    public Double getTopP() {
         return topP;
     }
 
-    public void setTopP(Integer topP) {
+    public void setTopP(Double topP) {
         this.topP = topP;
     }
 
@@ -91,11 +91,11 @@ public class ChatCompletionRequest {
         this.stream = stream;
     }
 
-    public String getStop() {
+    public List<String> getStop() {
         return stop;
     }
 
-    public void setStop(String stop) {
+    public void setStop(List<String> stop) {
         this.stop = stop;
     }
 
@@ -123,11 +123,11 @@ public class ChatCompletionRequest {
         this.frequencyPenalty = frequencyPenalty;
     }
 
-    public Map<String, Object> getLogitBias() {
+    public Map<String, Integer> getLogitBias() {
         return logitBias;
     }
 
-    public void setLogitBias(Map<String, Object> logitBias) {
+    public void setLogitBias(Map<String, Integer> logitBias) {
         this.logitBias = logitBias;
     }
 
