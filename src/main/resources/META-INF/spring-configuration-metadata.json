@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "openai.api.key",
+      "type": "java.lang.String",
+      "description": "OpenAI API Key"
+    }
+  ]
+}
