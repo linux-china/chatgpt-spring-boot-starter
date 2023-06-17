@@ -23,7 +23,7 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 
     @Test
     public void testChatWithFunctions() throws Exception {
-        final ChatCompletionRequest request = ChatCompletionRequest.functions("Hi Jackie. If you have time, could you write an email to Sam(libing.chen@gmail.com) and Tom(linux_china@hotmail.com) and invite them to join Make's birthday party at 4 pm tomorrow? Thanks!",
+        final ChatCompletionRequest request = ChatCompletionRequest.functions("Hi Jackie, could you write an email to Sam(libing.chen@gmail.com) and Tom(linux_china@hotmail.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!",
                 List.of("send_email"));
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
         // display reply combined text with function call
