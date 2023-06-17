@@ -22,14 +22,16 @@ public class GPTFunctions implements GPTFunctionsStub {
     }
 
     public record SendEmailRequest(
-            @Nonnull @Parameter("Receivers' email list") List<String> emails,
+            @Nonnull @Parameter("Recipients of email") List<String> recipients,
             @Nonnull @Parameter("Subject of email") String subject,
             @Parameter("Content of email") String content) {
     }
 
     @GPTFunction(name = "send_email", value = "Send email to receiver")
     public String sendEmail(SendEmailRequest request) {
-        System.out.println("send email to :" + String.join(",", request.emails));
-        return "Email sent to " + String.join(",", request.emails) + " successfully!";
+        System.out.println("Recipients :" + String.join(",", request.recipients));
+        System.out.println("Subject :" + request.subject);
+        System.out.println("Content : \n" + request.content);
+        return "Email sent to " + String.join(",", request.recipients) + " successfully!";
     }
 }
