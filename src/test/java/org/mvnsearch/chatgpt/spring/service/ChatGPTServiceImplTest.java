@@ -26,6 +26,9 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
         final ChatCompletionRequest request = ChatCompletionRequest.functions("Hi Jackie. If you have time, could you send an email to libing.chen@gmail.com and linux_china@hotmail.com and invite to join the party on tomorrow? Thanks!",
                 List.of("send_email"));
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
+        // display reply combined text with function call
+        System.out.println(response.getReplyCombinedText());
+        // call function manually
         for (ChatMessage chatMessage : response.getReply()) {
             final FunctionCall functionCall = chatMessage.getFunctionCall();
             if (functionCall != null) {
