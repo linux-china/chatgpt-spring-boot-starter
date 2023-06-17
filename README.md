@@ -89,7 +89,7 @@ public class GPTFunctions implements GPTFunctionsStub {
 public class ChatGPTServiceImplTest {
   @Test
   public void testChatWithFunctions() throws Exception {
-    final String prompt = "Hi Jackie, could you write an email to Libing(libing.chen@gmail.com) and Sam(linux_china@hotmail.com) and invite them to join Mike's birthday party at 4 tomorrow? Thanks!";
+    final String prompt = "Hi Jackie, could you write an email to Libing(libing.chen@gmail.com) and Sam(linux_china@hotmail.com) and invite them to join Mike's birthday party at 4 tomorrow by yourself? Thanks!";
     final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("send_email"));
     final ChatCompletionResponse response = chatGPTService.chat(request).block();
     // display reply combined text with function call
@@ -110,7 +110,7 @@ public class ChatGPTServiceImplTest {
 
 * [Spring Boot 3.0+](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 * [Spring Boot Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)
-* [Spring HTTP interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface)
+* [Spring 6 HTTP interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface)
 
 # References
 
