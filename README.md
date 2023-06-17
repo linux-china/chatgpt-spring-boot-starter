@@ -13,14 +13,14 @@ Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 
 # Get Started
 
-* Add dependency in your pom.xml
+* Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
 
 ```xml
 
 <dependency>
     <groupId>org.mvnsearch</groupId>
     <artifactId>chatgpt-spring-boot-starter</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
