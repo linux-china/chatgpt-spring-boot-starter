@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,6 @@ public class ChatGPTAutoConfiguration {
         WebClient webClient = WebClient.builder().defaultHeader("Authorization", "Bearer " + openaiApiKey).build();
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder().clientAdapter(WebClientAdapter.forClient(webClient)).build();
         OpenAIChatAPI openAIChatAPI = httpServiceProxyFactory.createClient(OpenAIChatAPI.class);
-        return new ChatGPTServiceImpl(openAIChatAPI, stubs);
+        return new ChatGPTServiceImpl(openAIChatAPI, stubs.orElse(Collections.emptyList()));
     }
 }
