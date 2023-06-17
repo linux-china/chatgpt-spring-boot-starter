@@ -28,8 +28,8 @@ public class GPTFunctions implements GPTFunctionsStub {
     }
 
     @GPTFunction(name = "send_email", value = "Send email to receiver")
-    public List<String> sendEmail(SendEmailRequest request) {
+    public String sendEmail(SendEmailRequest request) {
         System.out.println("send email to :" + String.join(",", request.emails));
-        return request.emails;
+        return "Email sent to " + String.join(",", request.emails) + " successfully!";
     }
 }
