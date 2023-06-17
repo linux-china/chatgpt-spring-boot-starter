@@ -75,9 +75,9 @@ public class GPTFunctions implements GPTFunctionsStub {
 
     @GPTFunction(name = "send_email", value = "Send email to receiver")
     public String sendEmail(SendEmailRequest request) {
-        System.out.println("Recipients :" + String.join(",", request.recipients));
-        System.out.println("Subject :" + request.subject);
-        System.out.println("Content : \n" + request.content);
+        System.out.println("Recipients: " + String.join(",", request.recipients));
+        System.out.println("Subject: " + request.subject);
+        System.out.println("Content:\n" + request.content);
         return "Email sent to " + String.join(",", request.recipients) + " successfully!";
     }
 }
