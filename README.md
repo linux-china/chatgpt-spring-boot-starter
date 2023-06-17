@@ -1,6 +1,16 @@
 ChatGPT Spring Boot Starter
 ===========================
 
+Spring Boot ChatGPT starter with ChatGPT chat and functions support.
+
+# Features
+
+* Base on Spring Boot 3.0+
+* Async with Spring Webflux
+* Support ChatGPT Chat Stream
+* Support ChatGPT functions
+* No third-party library: base on Spring 6 HTTP interface
+
 # Get Started
 
 * Add dependency in your pom.xml
@@ -33,7 +43,7 @@ public class ChatRobotController {
     @PostMapping("/chat")
     public Mono<String> chat(@RequestBody String content) {
         return chatGPTService.chat(ChatCompletionRequest.of(content))
-                        .map(ChatCompletionResponse::getReplyText);
+                .map(ChatCompletionResponse::getReplyText);
     }
 }
 ```
