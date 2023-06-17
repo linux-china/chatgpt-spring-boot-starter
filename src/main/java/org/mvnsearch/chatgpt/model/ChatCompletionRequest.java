@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,11 +176,11 @@ public class ChatCompletionRequest {
         this.functionNames.add(functionName);
     }
 
-    public static ChatCompletionRequest of(@NotNull String userMessage) {
+    public static ChatCompletionRequest of(@Nonnull String userMessage) {
         return of(null, userMessage, null);
     }
 
-    public static ChatCompletionRequest functions(@NotNull String userMessage, List<String> functionNames) {
+    public static ChatCompletionRequest functions(@Nonnull String userMessage, List<String> functionNames) {
         final ChatCompletionRequest request = new ChatCompletionRequest();
         request.setModel("gpt-3.5-turbo-0613");
         request.setFunctionNames(functionNames);
@@ -189,7 +188,7 @@ public class ChatCompletionRequest {
         return request;
     }
 
-    public static ChatCompletionRequest of(@Nullable String systemMessage, @NotNull String userMessage, @Nullable String assistantMessage) {
+    public static ChatCompletionRequest of(String systemMessage, @Nonnull String userMessage, String assistantMessage) {
         ChatCompletionRequest request = new ChatCompletionRequest();
         if (systemMessage != null && !systemMessage.isEmpty()) {
             request.addMessage(ChatMessage.systemMessage(systemMessage));

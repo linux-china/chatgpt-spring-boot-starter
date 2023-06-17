@@ -2,7 +2,7 @@ package org.mvnsearch.chatgpt.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jetbrains.annotations.NotNull;
+import jakarta.annotation.Nonnull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatMessage {
@@ -63,15 +63,15 @@ public class ChatMessage {
         this.functionCall = functionCall;
     }
 
-    public static ChatMessage systemMessage(@NotNull String content) {
+    public static ChatMessage systemMessage(@Nonnull String content) {
         return new ChatMessage("system", content);
     }
 
-    public static ChatMessage userMessage(@NotNull String content) {
+    public static ChatMessage userMessage(@Nonnull String content) {
         return new ChatMessage("user", content);
     }
 
-    public static ChatMessage assistantMessage(@NotNull String content) {
+    public static ChatMessage assistantMessage(@Nonnull String content) {
         return new ChatMessage("assistant", content);
     }
 }
