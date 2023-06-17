@@ -83,7 +83,7 @@ public class ChatGPTServiceImplTest {
 
 # Tech Stack
 
-* Spring Boot 3.1.0
+* Spring Boot 3.0+
 * Spring Boot Webflux
 * Spring HTTP interface
 
