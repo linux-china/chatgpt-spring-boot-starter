@@ -50,23 +50,29 @@ public class ChatRobotController {
 
 # ChatGPT functions
 
-* Create a Spring Bean with `@Component` and implement `GPTFunctionsStub` interface.
+* Create a Spring Bean with `@Component` and implement `GPTFunctionsStub` interface. Annotate GPT functions
+  with `@GPTFunction` annotation, and annotate function parameters with `@Parameter` annotation.  `@Nonnull` means that
+  the parameter is required.
 
 ```java
+
+import jakarta.annotation.Nonnull;
 
 @Component
 public class GPTFunctions implements GPTFunctionsStub {
 
     public record SendEmailRequest(
-            @Nonnull @Parameter("Receivers' email list") List<String> emails,
+            @Nonnull @Parameter("Recipients of email") List<String> recipients,
             @Nonnull @Parameter("Subject of email") String subject,
             @Parameter("Content of email") String content) {
     }
 
     @GPTFunction(name = "send_email", value = "Send email to receiver")
-    public List<String> sendEmail(SendEmailRequest request) {
-        System.out.println("send email to :" + String.join(",", request.emails));
-        return request.emails;
+    public String sendEmail(SendEmailRequest request) {
+        System.out.println("Recipients :" + String.join(",", request.recipients));
+        System.out.println("Subject :" + request.subject);
+        System.out.println("Content : \n" + request.content);
+        return "Email sent to " + String.join(",", request.recipients) + " successfully!";
     }
 }
 ```
@@ -77,7 +83,7 @@ public class GPTFunctions implements GPTFunctionsStub {
 public class ChatGPTServiceImplTest {
     @Test
     public void testChatWithFunctions() throws Exception {
-        final ChatCompletionRequest request = ChatCompletionRequest.functions("Hi Jackie. If you have time, could you send an email to libing.chen@gmail.com and linux_china@hotmail.com and invite to join the party on tomorrow? Thanks!",
+        final ChatCompletionRequest request = ChatCompletionRequest.functions("Hi Jackie, could you write an email to Libing(libing.chen@gmail.com) and Sam(linux_china@hotmail.com) and invite them to join Mike's birthday party at 4 tomorrow? Thanks!",
                 List.of("send_email"));
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
         // display reply combined text with function call
