@@ -28,7 +28,7 @@ Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 
 ```properties
 # OpenAI API Token, or you can set environment variable OPENAI_API_KEY
-openai.api.key=xxxx
+openai.api.key=sk-xxxx
 ```
 
 * Call `ChatGPTService` in your code
@@ -45,6 +45,12 @@ public class ChatRobotController {
         return chatGPTService.chat(ChatCompletionRequest.of(content))
                 .map(ChatCompletionResponse::getReplyText);
     }
+  
+   @GetMapping("/stream-chat")
+   public Flux<String> streamChat(@RequestParam String content) {
+       return chatGPTService.stream(ChatCompletionRequest.of(content))
+               .map(ChatCompletionResponse::getReplyText);
+   }
 }
 ```
 
