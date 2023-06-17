@@ -10,6 +10,7 @@ import org.mvnsearch.chatgpt.model.function.JsonSchemaFunction;
 import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -39,6 +40,36 @@ public class ChatGPTServiceImpl implements ChatGPTService {
 
     @Override
     public Mono<ChatCompletionResponse> chat(ChatCompletionRequest request) {
+        injectFunctions(request);
+        boolean functionsIncluded = request.getFunctions() != null;
+        if (!functionsIncluded) {
+            return openAIChatAPI.chat(request);
+        } else {
+            return openAIChatAPI.chat(request).doOnNext(response -> {
+                for (ChatMessage chatMessage : response.getReply()) {
+                    injectFunctionCallLambda(chatMessage);
+                }
+            });
+        }
+    }
+
+    @Override
+    public Flux<ChatCompletionResponse> stream(ChatCompletionRequest request) {
+        request.setStream(true);
+        injectFunctions(request);
+        boolean functionsIncluded = request.getFunctions() != null;
+        if (!functionsIncluded) {
+            return openAIChatAPI.stream(request);
+        } else {
+            return openAIChatAPI.stream(request).doOnNext(response -> {
+                for (ChatMessage chatMessage : response.getReply()) {
+                    injectFunctionCallLambda(chatMessage);
+                }
+            });
+        }
+    }
+
+    private void injectFunctions(ChatCompletionRequest request) {
         final List<String> functionNames = request.getFunctionNames();
         if (functionNames != null && !functionNames.isEmpty()) {
             List<JsonSchemaFunction> functions = new ArrayList<>();
@@ -54,24 +85,18 @@ public class ChatGPTServiceImpl implements ChatGPTService {
 
             }
         }
-        boolean functionsIncluded = request.getFunctions() != null;
-        if (!functionsIncluded) {
-            return openAIChatAPI.chat(request);
-        } else {
-            return openAIChatAPI.chat(request).doOnNext(response -> {
-                for (ChatMessage chatMessage : response.getReply()) {
-                    final FunctionCall functionCall = chatMessage.getFunctionCall();
-                    if (functionCall != null) {
-                        final String functionName = functionCall.getName();
-                        JsonSchemaFunction jsonSchemaFunction = functionsMap.get(functionName);
-                        if (jsonSchemaFunction != null) {
-                            functionCall.setFunctionStub(() -> GPTFunctionUtils.callGPTFunction(
-                                    functionBeans.get(functionName), jsonSchemaFunction, functionCall.getArguments())
-                            );
-                        }
-                    }
-                }
-            });
+    }
+
+    private void injectFunctionCallLambda(ChatMessage chatMessage) {
+        final FunctionCall functionCall = chatMessage.getFunctionCall();
+        if (functionCall != null) {
+            final String functionName = functionCall.getName();
+            JsonSchemaFunction jsonSchemaFunction = functionsMap.get(functionName);
+            if (jsonSchemaFunction != null) {
+                functionCall.setFunctionStub(() -> GPTFunctionUtils.callGPTFunction(
+                        functionBeans.get(functionName), jsonSchemaFunction, functionCall.getArguments())
+                );
+            }
         }
     }
 }
