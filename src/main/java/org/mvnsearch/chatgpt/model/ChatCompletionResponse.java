@@ -68,6 +68,11 @@ public class ChatCompletionResponse {
         return this.choices.stream().map(ChatCompletionChoice::getMessage).toList();
     }
 
+    /**
+     * get reply text from messages' content
+     *
+     * @return reply text
+     */
     @JsonIgnore
     public String getReplyText() {
         if (this.choices == null || this.choices.isEmpty()) return "";
@@ -76,6 +81,37 @@ public class ChatCompletionResponse {
             final ChatMessage message = choice.getMessage();
             if (message != null && message.getContent() != null) {
                 sb.append(message.getContent());
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * get reply combined text with function call result embedded
+     *
+     * @return reply text
+     */
+    @JsonIgnore
+    public String getReplyCombinedText() {
+        if (this.choices == null || this.choices.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for (ChatCompletionChoice choice : choices) {
+            final ChatMessage message = choice.getMessage();
+            if (message != null) {
+                if (message.getContent() != null) {
+                    sb.append(message.getContent());
+                }
+                final FunctionCall functionCall = message.getFunctionCall();
+                if (functionCall != null) {
+                    try {
+                        final Object result = functionCall.getFunctionStub().call();
+                        if (result != null) {
+                            sb.append(result);
+                        }
+                    } catch (Exception e) {
+                        sb.append("FunctionError: ").append(e.getMessage());
+                    }
+                }
             }
         }
         return sb.toString();
