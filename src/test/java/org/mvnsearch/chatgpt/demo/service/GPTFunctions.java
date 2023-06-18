@@ -12,13 +12,14 @@ import java.util.List;
 @Component
 public class GPTFunctions implements GPTFunctionsStub {
 
-    public record CompileJavaRequest(
-            @Parameter(required = true, value = "java file name or source code") String source) {
+    public record SQLQueryRequest(
+            @Parameter(required = true, value = "SQL to query") String sql) {
     }
 
-    @GPTFunction(name = "compile_java", value = "Compile Java code")
-    public void compileJava(CompileJavaRequest request) {
-        System.out.println("Compiling Java Code");
+    @GPTFunction(name = "execute_sql_query", value = "Execute SQL query and return the result set")
+    public String executeSQLQuery(SQLQueryRequest request) {
+        System.out.println("Execute SQL: " + request.sql);
+        return "id, name, salary\n1,Jackie,8000\n2,Libing,78000\n3,Sam,7500";
     }
 
     public record SendEmailRequest(
