@@ -50,7 +50,7 @@ Content-Type: application/json
   "messages": [
     {
       "role": "user",
-      "content": "Write the SQL to query all employees whose salary is greater than the average."
+      "content": "Write the SQL to query all employees whose salary is greater than the average, and execute it."
     }
   ],
   "functions": [
