@@ -9,7 +9,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,17 +95,6 @@ public class GPTFunctionUtils {
         } else {
             return "object";
         }
-    }
-
-    /**
-     * convert functions to json array
-     *
-     * @param jsonSchemaFunctions JSON Schema functions
-     * @return JSON Array text
-     * @throws Exception exception
-     */
-    public static String toFunctionsJsonArray(Collection<ChatGPTJavaFunction> jsonSchemaFunctions) throws Exception {
-        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonSchemaFunctions);
     }
 
     /**
