@@ -55,13 +55,13 @@ Content-Type: application/json
   ],
   "functions": [
     {
-      "name": "execute_sql",
-      "description": "Execute SQL and return the result",
+      "name": "execute_sql_query",
+      "description": "Execute SQL and return the result set",
       "parameters": {
         "type": "object",
         "properties": {
           "sql": {
-            "type": "number",
+            "type": "string",
             "description": "SQL to query"
           }
         },
