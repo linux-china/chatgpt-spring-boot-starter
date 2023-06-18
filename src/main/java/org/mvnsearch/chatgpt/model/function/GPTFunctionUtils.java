@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ public class GPTFunctionUtils {
                 gptJavaFunction.setName(functionName);
                 gptJavaFunction.setDescription(gptFunctionAnnotation.value());
                 final Class<?> requestClazz = method.getParameterTypes()[0];
+                gptJavaFunction.setParameterType(requestClazz);
                 for (Field field : requestClazz.getDeclaredFields()) {
                     // parse properties
                     final Parameter functionParamAnnotation = field.getAnnotation(Parameter.class);
@@ -54,7 +54,7 @@ public class GPTFunctionUtils {
                             fieldName = field.getName();
                         }
                         if (fieldType.equals("array")) {
-                            Class<?> actualClazz = parseInferredClass(field.getGenericType());
+                            Class<?> actualClazz = parseArrayItemClass(field.getGenericType());
                             gptJavaFunction.addArrayProperty(fieldName, getJsonSchemaType(actualClazz), functionParamAnnotation.value());
                         } else if (fieldType.equals("object")) {
                             throw new Exception("Object type not supported: " + clazz.getName() + "." + field.getName());
@@ -120,41 +120,31 @@ public class GPTFunctionUtils {
      */
     public static Object callGPTFunction(Object target, ChatGPTJavaFunction function, String argumentsJson) throws Exception {
         final Method javaMethod = function.getJavaMethod();
-        final Class<?> parameterType = javaMethod.getParameterTypes()[0];
+        final Class<?> parameterType = function.getParameterType();
         final Object param = objectMapper.readValue(argumentsJson, parameterType);
         return javaMethod.invoke(target, param);
     }
 
-    private static Class<?> parseInferredClass(Type genericType) {
-        Class<?> inferredClass = null;
-        if (genericType instanceof ParameterizedType type) {
-            Type[] typeArguments = type.getActualTypeArguments();
-            if (typeArguments.length > 0) {
-                final Type typeArgument = typeArguments[0];
-                if (typeArgument instanceof ParameterizedType) {
-                    inferredClass = (Class<?>) ((ParameterizedType) typeArgument).getActualTypeArguments()[0];
-                } else if (typeArgument instanceof Class) {
-                    inferredClass = (Class<?>) typeArgument;
-                } else {
-                    String typeName = typeArgument.getTypeName();
-                    if (typeName.contains(" ")) {
-                        typeName = typeName.substring(typeName.lastIndexOf(" ") + 1);
-                    }
-                    if (typeName.contains("<")) {
-                        typeName = typeName.substring(0, typeName.indexOf("<"));
-                    }
-                    try {
-                        inferredClass = Class.forName(typeName);
-                    } catch (Exception e) {
-                        log.error("Failed to load inferred class: " + typeName, e);
-                    }
-                }
-            }
+    /**
+     * GraalVM native image compatible
+     *
+     * @param genericType generic type
+     * @return item class
+     */
+    private static Class<?> parseArrayItemClass(Type genericType) {
+        String itemClassName = genericType.getTypeName();
+        if (itemClassName.contains("<")) {
+            itemClassName = itemClassName.substring(itemClassName.indexOf("<") + 1, itemClassName.indexOf(">"));
         }
-        if (inferredClass == null && genericType instanceof Class) {
-            inferredClass = (Class<?>) genericType;
-        }
-        return inferredClass;
+        return switch (itemClassName) {
+            case "java.lang.Integer" -> Integer.class;
+            case "java.lang.Long" -> Long.class;
+            case "java.lang.Boolean" -> Boolean.class;
+            case "java.lang.Double" -> Double.class;
+            case "java.lang.Float" -> Float.class;
+            case "java.lang.String" -> String.class;
+            default -> Object.class;
+        };
     }
 
 }
