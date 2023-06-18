@@ -1,9 +1,9 @@
 package org.mvnsearch.chatgpt.spring.config;
 
 import org.mvnsearch.chatgpt.model.*;
+import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
-import org.mvnsearch.chatgpt.model.function.JsonSchemaFunction;
 import org.mvnsearch.chatgpt.model.function.Parameter;
 import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
@@ -21,16 +21,20 @@ import java.util.List;
 import java.util.Optional;
 
 @RegisterReflectionForBinding({
+        Parameter.class,
+        GPTFunction.class,
         ChatCompletionRequest.class,
         ChatCompletionResponse.class,
         ChatCompletionChoice.class,
         ChatCompletionUsage.class,
-        Parameter.class,
-        GPTFunction.class,
-        GPTFunctionsStub.class,
         ChatMessage.class,
         FunctionCall.class,
-        JsonSchemaFunction.class
+        ChatFunction.class,
+        ChatFunction.Parameters.class,
+        ChatFunction.JsonSchemaProperty.class,
+        ChatFunction.JsonArrayItems.class,
+        GPTFunctionsStub.class,
+        ChatGPTJavaFunction.class,
 })
 @AutoConfiguration
 public class ChatGPTAutoConfiguration {
