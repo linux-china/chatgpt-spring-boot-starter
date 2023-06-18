@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
 import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
 import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
-import org.mvnsearch.chatgpt.model.ChatMessage;
-import org.mvnsearch.chatgpt.model.FunctionCall;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -20,6 +18,15 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
         System.out.println(response.getReplyText());
     }
+
+    @Test
+    public void testCompileJava() {
+        final String prompt = "Give me a simple Java example, and compile the generated source code";
+        final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("compile_java"));
+        final ChatCompletionResponse response = chatGPTService.chat(request).block();
+        System.out.println(response.getReplyCombinedText());
+    }
+
 
     @Test
     public void testChatWithFunctions() throws Exception {
