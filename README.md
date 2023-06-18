@@ -133,6 +133,7 @@ ChatGPT Functions use cases:
 * Structure Output: such as SQL, JSON, CSV, YAML etc., then delegate functions to process them.
 * Commands: such as send_email, post on Twitter.
 * DevOps: such as generate K8S yaml file, then call K8S functions to deploy it.
+* Search Matching: bind search with functions, such as search for a book, then call function to show it.
 * PipeLine: you can think function as a node in pipeline. After process by function, and you can pass it to ChatGPT
   again.
 
