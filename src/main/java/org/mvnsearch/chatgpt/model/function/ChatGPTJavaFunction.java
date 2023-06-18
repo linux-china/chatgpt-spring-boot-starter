@@ -16,6 +16,8 @@ public class ChatGPTJavaFunction {
     @JsonIgnore
     private Method javaMethod;
     @JsonIgnore
+    private Class<?> parameterType;
+    @JsonIgnore
     private Object target;
 
     public String getName() {
@@ -50,6 +52,14 @@ public class ChatGPTJavaFunction {
         this.javaMethod = javaMethod;
     }
 
+    public Class<?> getParameterType() {
+        return parameterType;
+    }
+
+    public void setParameterType(Class<?> parameterType) {
+        this.parameterType = parameterType;
+    }
+
     public Object getTarget() {
         return target;
     }
@@ -57,6 +67,7 @@ public class ChatGPTJavaFunction {
     public void setTarget(Object target) {
         this.target = target;
     }
+
 
     public void addProperty(String name, String type, String description) {
         if (this.parameters == null) {
