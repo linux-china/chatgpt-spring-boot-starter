@@ -4,9 +4,9 @@ Content-Type: text/plain
 
 What's Java?
 
-### ChatGPT translation
+### ChatGPT simple chat for translation
 POST https://api.openai.com/v1/chat/completions
-Authorization: Bearer {{openai_api_key}}
+Authorization: Bearer {{OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
@@ -22,6 +22,23 @@ Content-Type: application/json
     }
   ]
 }
+
+### ChatGPT stream
+POST https://api.openai.com/v1/chat/completions
+Authorization: Bearer {{OPENAI_API_KEY}}
+Content-Type: application/json
+
+{
+  "model": "gpt-3.5-turbo",
+  "stream": true,
+  "messages": [
+    {
+      "role": "user",
+      "content": "What is Java?"
+    }
+  ]
+}
+
 
 ### ChatGPT function call
 POST https://api.openai.com/v1/chat/completions
