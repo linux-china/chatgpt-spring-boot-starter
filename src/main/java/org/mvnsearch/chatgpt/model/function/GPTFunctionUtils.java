@@ -29,8 +29,8 @@ public class GPTFunctionUtils {
      * @param clazz Java Class
      * @return GPT functions
      */
-    public static Map<String, JsonSchemaFunction> extractFunctions(Class<?> clazz) throws Exception {
-        Map<String, JsonSchemaFunction> functionDeclares = new HashMap<>();
+    public static Map<String, ChatGPTJavaFunction> extractFunctions(Class<?> clazz) throws Exception {
+        Map<String, ChatGPTJavaFunction> functionDeclares = new HashMap<>();
         for (Method method : clazz.getMethods()) {
             //check GPT function or not
             final GPTFunction gptFunctionAnnotation = method.getAnnotation(GPTFunction.class);
@@ -39,10 +39,10 @@ public class GPTFunctionUtils {
                 if (functionName.isEmpty()) {
                     functionName = method.getName();
                 }
-                JsonSchemaFunction gptFunction = new JsonSchemaFunction();
-                gptFunction.setJavaMethod(method);
-                gptFunction.setName(functionName);
-                gptFunction.setDescription(gptFunctionAnnotation.value());
+                ChatGPTJavaFunction gptJavaFunction = new ChatGPTJavaFunction();
+                gptJavaFunction.setJavaMethod(method);
+                gptJavaFunction.setName(functionName);
+                gptJavaFunction.setDescription(gptFunctionAnnotation.value());
                 final Class<?> requestClazz = method.getParameterTypes()[0];
                 for (Field field : requestClazz.getDeclaredFields()) {
                     // parse properties
@@ -55,26 +55,26 @@ public class GPTFunctionUtils {
                         }
                         if (fieldType.equals("array")) {
                             Class<?> actualClazz = parseInferredClass(field.getGenericType());
-                            gptFunction.addArrayProperty(fieldName, getJsonSchemaType(actualClazz), functionParamAnnotation.value());
+                            gptJavaFunction.addArrayProperty(fieldName, getJsonSchemaType(actualClazz), functionParamAnnotation.value());
                         } else if (fieldType.equals("object")) {
                             throw new Exception("Object type not supported: " + clazz.getName() + "." + field.getName());
                         } else {
-                            gptFunction.addProperty(fieldName, fieldType, functionParamAnnotation.value());
+                            gptJavaFunction.addProperty(fieldName, fieldType, functionParamAnnotation.value());
                         }
                         if (functionParamAnnotation.required()) {
-                            gptFunction.addRequired(fieldName);
+                            gptJavaFunction.addRequired(fieldName);
                         } else {
                             for (Annotation annotation : field.getAnnotations()) {
                                 final String annotationName = annotation.annotationType().getName().toLowerCase();
                                 if (annotationName.endsWith("nonnull")) {
-                                    gptFunction.addRequired(fieldName);
+                                    gptJavaFunction.addRequired(fieldName);
                                     break;
                                 }
                             }
                         }
                     }
                 }
-                functionDeclares.put(functionName, gptFunction);
+                functionDeclares.put(functionName, gptJavaFunction);
             }
         }
         return functionDeclares;
@@ -105,7 +105,7 @@ public class GPTFunctionUtils {
      * @return JSON Array text
      * @throws Exception exception
      */
-    public static String toFunctionsJsonArray(Collection<JsonSchemaFunction> jsonSchemaFunctions) throws Exception {
+    public static String toFunctionsJsonArray(Collection<ChatGPTJavaFunction> jsonSchemaFunctions) throws Exception {
         return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonSchemaFunctions);
     }
 
@@ -118,7 +118,7 @@ public class GPTFunctionUtils {
      * @return result
      * @throws Exception exception
      */
-    public static Object callGPTFunction(Object target, JsonSchemaFunction function, String argumentsJson) throws Exception {
+    public static Object callGPTFunction(Object target, ChatGPTJavaFunction function, String argumentsJson) throws Exception {
         final Method javaMethod = function.getJavaMethod();
         final Class<?> parameterType = javaMethod.getParameterTypes()[0];
         final Object param = objectMapper.readValue(argumentsJson, parameterType);
@@ -127,8 +127,7 @@ public class GPTFunctionUtils {
 
     private static Class<?> parseInferredClass(Type genericType) {
         Class<?> inferredClass = null;
-        if (genericType instanceof ParameterizedType) {
-            ParameterizedType type = (ParameterizedType) genericType;
+        if (genericType instanceof ParameterizedType type) {
             Type[] typeArguments = type.getActualTypeArguments();
             if (typeArguments.length > 0) {
                 final Type typeArgument = typeArguments[0];
