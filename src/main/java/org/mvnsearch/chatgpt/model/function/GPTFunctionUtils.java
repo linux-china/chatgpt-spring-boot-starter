@@ -2,7 +2,6 @@ package org.mvnsearch.chatgpt.model.function;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +21,7 @@ public class GPTFunctionUtils {
     private static final Logger log = LoggerFactory.getLogger(GPTFunctionUtils.class);
     public static final ObjectMapper objectMapper = new ObjectMapper()
             .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-            .registerModule(new ParameterNamesModule());
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
     /**
      * extract GPT functions from class by scanning methods with @GPTFunction
