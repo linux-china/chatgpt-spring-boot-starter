@@ -49,8 +49,12 @@ Content-Type: application/json
   "model": "gpt-3.5-turbo-0613",
   "messages": [
     {
+      "role": "system",
+      "content": "You are SQL developer. Write SQL according to requirements, and execute it in MySQL database."
+    },
+    {
       "role": "user",
-      "content": "Write the SQL to query all employees whose salary is greater than the average, and execute it."
+      "content": "Query all employees whose salary is greater than the average."
     }
   ],
   "functions": [

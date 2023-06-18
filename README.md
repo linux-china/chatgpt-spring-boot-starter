@@ -115,13 +115,16 @@ public class ChatGPTServiceImplTest {
         }
     }
     
-     @Test
-     public void testExecuteSQLQuery() {
-         final String prompt = "Write the SQL to query all employees whose salary is greater than the average, and execute it.";
-         final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("execute_sql_query"));
-         final ChatCompletionResponse response = chatGPTService.chat(request).block();
-         System.out.println(response.getReplyCombinedText());
-     }
+    @Test
+    public void testExecuteSQLQuery() {
+        String context = "You are SQL developer. Write SQL according to requirements, and execute it in MySQL database.";
+        final String prompt = "Query all employees whose salary is greater than the average.";
+        final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("execute_sql_query"));
+        // add prompt context as system message
+        request.addMessage(ChatMessage.systemMessage(context));
+        final ChatCompletionResponse response = chatGPTService.chat(request).block();
+        System.out.println(response.getReplyCombinedText());
+    }
 }
 ```
 
