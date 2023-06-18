@@ -50,23 +50,23 @@ Content-Type: application/json
   "messages": [
     {
       "role": "user",
-      "content": "Give me a simple Java example, and compile the generated source code."
+      "content": "Write the SQL to query all employees whose salary is greater than the average."
     }
   ],
   "functions": [
     {
-      "name": "compile_java",
-      "description": "Compile Java source file",
+      "name": "execute_sql",
+      "description": "Execute SQL and return the result",
       "parameters": {
         "type": "object",
         "properties": {
-          "source": {
-            "type": "string",
-            "description": "java file name or source code"
+          "sql": {
+            "type": "number",
+            "description": "SQL to query"
           }
         },
         "required": [
-          "source"
+          "sql"
         ]
       }
     }
