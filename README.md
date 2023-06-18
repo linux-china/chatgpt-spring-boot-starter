@@ -128,7 +128,7 @@ public class ChatGPTServiceImplTest {
 }
 ```
 
-ChatGPT Functions use cases:
+### ChatGPT Functions use cases:
 
 * Structure Output: such as SQL, JSON, CSV, YAML etc., then delegate functions to process them.
 * Commands: such as send_email, post on Twitter.
@@ -137,12 +137,9 @@ ChatGPT Functions use cases:
 * PipeLine: you can think function as a node in pipeline. After process by function, and you can pass it to ChatGPT
   again.
 
-# Tech Stack
+# References
 
+* [OpenAI chat API](https://platform.openai.com/docs/api-reference/chat)
 * [Spring Boot 3.0+](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 * [Spring Boot Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)
 * [Spring 6 HTTP interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface)
-
-# References
-
-* OpenAI chat API: https://platform.openai.com/docs/api-reference/chat
