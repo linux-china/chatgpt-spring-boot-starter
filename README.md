@@ -21,7 +21,7 @@ Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 <dependency>
     <groupId>org.mvnsearch</groupId>
     <artifactId>chatgpt-spring-boot-starter</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
