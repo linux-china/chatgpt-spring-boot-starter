@@ -3,7 +3,6 @@ package org.mvnsearch.chatgpt.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import jakarta.annotation.Nonnull;
 
 import java.util.ArrayList;
@@ -33,8 +32,7 @@ public class ChatCompletionRequest {
     /**
      * functions with json array
      */
-    @JsonRawValue
-    private String functions;
+    private List<ChatFunction> functions;
     @JsonIgnore
     private List<String> functionNames;
     @JsonProperty("function_call")
@@ -139,12 +137,19 @@ public class ChatCompletionRequest {
         this.user = user;
     }
 
-    public String getFunctions() {
+    public List<ChatFunction> getFunctions() {
         return functions;
     }
 
-    public void setFunctions(String functions) {
+    public void setFunctions(List<ChatFunction> functions) {
         this.functions = functions;
+    }
+
+    public void addFunction(ChatFunction function) {
+        if (this.functions == null) {
+            this.functions = new ArrayList<>();
+        }
+        this.functions.add(function);
     }
 
     public Object getFunctionCall() {
