@@ -81,11 +81,11 @@ public class GPTFunctions implements GPTFunctionsStub {
         System.out.println("Content:\n" + request.content);
         return "Email sent to " + String.join(",", request.recipients) + " successfully!";
     }
-    
+
     public record SQLQueryRequest(
             @Parameter(required = true, value = "SQL to query") String sql) {
     }
-  
+
     @GPTFunction(name = "execute_sql_query", value = "Execute SQL query and return the result set")
     public String executeSQLQuery(SQLQueryRequest request) {
         System.out.println("Execute SQL: " + request.sql);
@@ -114,7 +114,7 @@ public class ChatGPTServiceImplTest {
             }
         }
     }
-    
+
     @Test
     public void testExecuteSQLQuery() {
         String context = "You are SQL developer. Write SQL according to requirements, and execute it in MySQL database.";
@@ -127,6 +127,14 @@ public class ChatGPTServiceImplTest {
     }
 }
 ```
+
+ChatGPT Functions use cases:
+
+* Structure Output: such as SQL, JSON, CSV, YAML etc., then delegate functions to process them.
+* Commands: such as send_email, post on Twitter.
+* DevOps: such as generate K8S yaml file, then call K8S functions to deploy it.
+* PipeLine: you can think function as a node in pipeline. After process by function, and you can pass it to ChatGPT
+  again.
 
 # Tech Stack
 
