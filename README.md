@@ -94,7 +94,7 @@ public class GPTFunctions implements GPTFunctionsStub {
 }
 ```
 
-* Call GPT function by `chatMessage.getFunctionCall().getFunctionStub().call()`:
+* Call GPT function by `response.getReplyCombinedText()` or `chatMessage.getFunctionCall().getFunctionStub().call()`:
 
 ```java
 public class ChatGPTServiceImplTest {
