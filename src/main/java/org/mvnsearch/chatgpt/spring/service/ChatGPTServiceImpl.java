@@ -59,13 +59,17 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         injectFunctions(request);
         boolean functionsIncluded = request.getFunctions() != null;
         if (!functionsIncluded) {
-            return openAIChatAPI.stream(request);
-        } else {
-            return openAIChatAPI.stream(request).doOnNext(response -> {
-                for (ChatMessage chatMessage : response.getReply()) {
-                    injectFunctionCallLambda(chatMessage);
-                }
+            return openAIChatAPI.stream(request).onErrorContinue((e, obj) -> {
             });
+        } else {
+            return openAIChatAPI.stream(request)
+                    .onErrorContinue((e, obj) -> {
+                    })
+                    .doOnNext(response -> {
+                        for (ChatMessage chatMessage : response.getReply()) {
+                            injectFunctionCallLambda(chatMessage);
+                        }
+                    });
         }
     }
 
