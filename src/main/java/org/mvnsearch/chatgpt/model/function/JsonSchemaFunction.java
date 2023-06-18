@@ -2,6 +2,7 @@ package org.mvnsearch.chatgpt.model.function;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.mvnsearch.chatgpt.model.ChatFunction;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public class JsonSchemaFunction {
     private Parameters parameters;
     @JsonIgnore
     private Method javaMethod;
+    @JsonIgnore
+    private Object target;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public record Parameters(String type, Map<String, Object> properties, List<String> required) {
@@ -68,6 +71,14 @@ public class JsonSchemaFunction {
         this.javaMethod = javaMethod;
     }
 
+    public Object getTarget() {
+        return target;
+    }
+
+    public void setTarget(Object target) {
+        this.target = target;
+    }
+
     public void addProperty(String name, String type, String description) {
         if (this.parameters == null) {
             this.parameters = new Parameters("object", new HashMap<>(), new ArrayList<>());
@@ -84,5 +95,14 @@ public class JsonSchemaFunction {
 
     public void addRequired(String name) {
         this.getParameters().required.add(name);
+    }
+
+    public ChatFunction toChatFunction() throws Exception {
+        String functionJsonText = GPTFunctionUtils.objectMapper.writeValueAsString(this);
+        return GPTFunctionUtils.objectMapper.readValue(functionJsonText, ChatFunction.class);
+    }
+
+    public Object call(String argumentsJson) throws Exception {
+        return GPTFunctionUtils.callGPTFunction(target, this, argumentsJson);
     }
 }
