@@ -18,7 +18,7 @@ public class GPTFunctions implements GPTFunctionsStub {
 
     @GPTFunction(name = "compile_java", value = "Compile Java code")
     public void compileJava(CompileJavaRequest request) {
-        System.out.println(request.source);
+        System.out.println("Compiling Java Code");
     }
 
     public record SendEmailRequest(
