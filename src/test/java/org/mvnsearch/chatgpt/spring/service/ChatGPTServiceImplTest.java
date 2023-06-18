@@ -20,9 +20,9 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     }
 
     @Test
-    public void testCompileJava() {
-        final String prompt = "Give me a simple Java example, and compile the generated source code";
-        final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("compile_java"));
+    public void testExecuteSQLQuery() {
+        final String prompt = "Write the SQL to query all employees whose salary is greater than the average.";
+        final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("execute_sql_query"));
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
         System.out.println(response.getReplyCombinedText());
     }
