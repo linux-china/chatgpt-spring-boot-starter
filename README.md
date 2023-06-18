@@ -81,6 +81,16 @@ public class GPTFunctions implements GPTFunctionsStub {
         System.out.println("Content:\n" + request.content);
         return "Email sent to " + String.join(",", request.recipients) + " successfully!";
     }
+    
+    public record SQLQueryRequest(
+            @Parameter(required = true, value = "SQL to query") String sql) {
+    }
+  
+    @GPTFunction(name = "execute_sql_query", value = "Execute SQL query and return the result set")
+    public String executeSQLQuery(SQLQueryRequest request) {
+        System.out.println("Execute SQL: " + request.sql);
+        return "id, name, salary\n1,Jackie,8000\n2,Libing,78000\n3,Sam,7500";
+    }
 }
 ```
 
@@ -104,6 +114,14 @@ public class ChatGPTServiceImplTest {
             }
         }
     }
+    
+     @Test
+     public void testExecuteSQLQuery() {
+         final String prompt = "Write the SQL to query all employees whose salary is greater than the average, and execute it.";
+         final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("execute_sql_query"));
+         final ChatCompletionResponse response = chatGPTService.chat(request).block();
+         System.out.println(response.getReplyCombinedText());
+     }
 }
 ```
 
