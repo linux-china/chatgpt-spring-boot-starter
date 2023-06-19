@@ -8,12 +8,12 @@ import org.springframework.web.service.annotation.PostExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@HttpExchange("https://api.openai.com")
+@HttpExchange
 public interface OpenAIChatAPI {
-    @PostExchange("/v1/chat/completions")
+    @PostExchange("/chat/completions")
     Mono<ChatCompletionResponse> chat(@RequestBody ChatCompletionRequest request);
 
-    @PostExchange("/v1/chat/completions")
+    @PostExchange("/chat/completions")
     Flux<ChatCompletionResponse> stream(@RequestBody ChatCompletionRequest request);
 
 }
