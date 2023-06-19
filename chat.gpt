@@ -1,0 +1,97 @@
+---
+model: gpt-3.5-turbo-0613
+openai_api_key: sk-xxxx
+---
+
+# Simple Chat
+
+What is Java?
+
+# Function to execute SQL Query
+
+You are SQL developer. Write SQL according to requirements, and execute it in MySQL database. {.system}
+
+Query all employees whose salary is greater than the average.
+      
+```json {.functions}
+[
+  {
+    "name": "execute_sql_query",
+    "description": "Execute SQL and return the result set",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "sql": {
+          "type": "string",
+          "description": "SQL to query"
+        }
+      },
+      "required": [
+        "sql"
+      ]
+    }
+  }
+]
+```
+
+##### ChatGPT
+
+```json {.function_call}
+{
+  "name" : "execute_sql_query",
+  "arguments" : {
+    "sql" : "SELECT * FROM employees WHERE salary > (SELECT AVG(salary) FROM employees)"
+  }
+}
+```
+
+# Function to send email
+
+Hi Jackie, could you write an email to Libing(libing.chen@gmail.com) and Sam(linux_china@hotmail.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!
+
+```json {.functions}
+[
+  {
+    "name": "send_email",
+    "description": "Send email to recipients",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Recipients of email"
+        },
+        "subject": {
+          "type": "string",
+          "description": "Subject of email"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content of email"
+        }
+      },
+      "required": [
+        "recipients",
+        "subject"
+      ]
+    }
+  }
+]
+```
+
+##### ChatGPT
+
+```json {.function_call}
+{
+  "name" : "send_email",
+  "arguments" : {
+    "recipients" : [ "libing.chen@gmail.com", "linux_china@hotmail.com" ],
+    "subject" : "Invitation to Mike's Birthday Party",
+    "content" : "Dear Libing and Sam,\n\nI hope this email finds you well. I am writing to invite you to Mike's birthday party, which will be held tomorrow at 4 pm. We would love for you to join us in celebrating this special occasion.\n\nPlease let me know if you are able to attend, so that we can make the necessary arrangements.\n\nLooking forward to seeing you!\n\nBest regards,\nJackie"
+  }
+}
+```
+
