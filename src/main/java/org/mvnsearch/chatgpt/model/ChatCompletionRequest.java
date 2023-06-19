@@ -145,12 +145,6 @@ public class ChatCompletionRequest {
         this.functions = functions;
     }
 
-    public void addFunction(ChatFunction function) {
-        if (this.functions == null) {
-            this.functions = new ArrayList<>();
-        }
-        this.functions.add(function);
-    }
 
     public Object getFunctionCall() {
         return functionCall;
@@ -177,8 +171,24 @@ public class ChatCompletionRequest {
     public void addFunction(String functionName) {
         if (this.functionNames == null) {
             this.functionNames = new ArrayList<>();
+            updateModelWithFunctionSupport();
         }
         this.functionNames.add(functionName);
+    }
+
+    public void addFunction(ChatFunction function) {
+        if (this.functions == null) {
+            this.functions = new ArrayList<>();
+            updateModelWithFunctionSupport();
+        }
+        this.functions.add(function);
+    }
+
+    private void updateModelWithFunctionSupport() {
+        // Snapshot of gpt-3.5-turbo from June 13th 2023 with function support
+        if (!this.model.endsWith("-0613")) {
+            this.model = this.model + "-0613";
+        }
     }
 
     public static ChatCompletionRequest of(@Nonnull String userMessage) {
