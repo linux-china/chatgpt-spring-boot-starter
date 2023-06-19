@@ -11,10 +11,13 @@ Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 * Support ChatGPT functions
 * No third-party library: base on Spring 6 HTTP interface
 * GraalVM native image support
+* Azure OpenAI support
 
 # Get Started
 
-* Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
+### Add dependency
+
+Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
 
 ```xml
 
@@ -25,14 +28,23 @@ Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 </dependency>
 ```
 
-* Add `openai.api.key` in `application.properties`:
+### Add configuration
+
+Add `openai.api.key` in `application.properties`:
 
 ```properties
 # OpenAI API Token, or you can set environment variable OPENAI_API_KEY
 openai.api.key=sk-xxxx
 ```
 
-* Call `ChatGPTService` in your code
+If you want to use Azure OpenAI, you can add `openai.api.url` in `application.properties`:
+
+```properties
+openai.api.key=1138xxxx9037
+openai.api.url=https://YOUR_RESOURCE_NAME.openai.azure.com/openai/deployments/YOUR_DEPLOYMENT_NAME/chat/completions?api-version=2023-05-15
+```
+
+### Call ChatGPT Service
 
 ```java
 
