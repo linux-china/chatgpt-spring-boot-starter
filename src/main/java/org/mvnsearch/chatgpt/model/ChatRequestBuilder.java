@@ -44,6 +44,16 @@ public class ChatRequestBuilder {
     }
 
     /**
+     * use `gpt-4` model
+     *
+     * @return builder
+     */
+    public ChatRequestBuilder gpt4() {
+        request.setModel("gpt-4");
+        return this;
+    }
+
+    /**
      * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
      *
      * @param temperature sampling temperature, Defaults to 1
