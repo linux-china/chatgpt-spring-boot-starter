@@ -137,6 +137,10 @@ public class ChatGPTServiceImplTest {
 * PipeLine: you can think function as a node in pipeline. After process by function, and you can pass it to ChatGPT
   again.
 
+If you want to have a simple test for ChatGPT functions, you can install [ChatGPT with Markdown
+JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown), and take a look
+at [chat.gpt file](./chat.gpt).
+
 # References
 
 * [OpenAI chat API](https://platform.openai.com/docs/api-reference/chat)
