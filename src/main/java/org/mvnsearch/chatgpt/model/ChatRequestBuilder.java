@@ -248,6 +248,11 @@ public class ChatRequestBuilder {
         return this;
     }
 
+    public ChatRequestBuilder functionCall(String name) {
+        request.setFunctionCall(name);
+        return this;
+    }
+
     /**
      * generate  the chat completion request
      *
