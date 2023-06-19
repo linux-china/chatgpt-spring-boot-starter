@@ -23,6 +23,25 @@ Content-Type: application/json
   ]
 }
 
+### Azure simple chat for translation
+POST {{AZURE_OPENAI_ENDPOINT}}
+api-key: {{AZURE_OPENAI_KEY}}
+Content-Type: application/json
+
+{
+  "model": "gpt-35-turbo-0301",
+  "messages": [
+    {
+      "role": "system",
+      "content": "I want you to act as an English to Chinese translator."
+    },
+    {
+      "role": "user",
+      "content": "Hello, how are you?"
+    }
+  ]
+}
+
 ### ChatGPT stream
 POST https://api.openai.com/v1/chat/completions
 Authorization: Bearer {{OPENAI_API_KEY}}
