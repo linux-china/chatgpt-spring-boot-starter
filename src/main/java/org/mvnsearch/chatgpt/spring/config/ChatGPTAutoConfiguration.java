@@ -12,10 +12,14 @@ import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,8 +44,38 @@ import java.util.Optional;
 public class ChatGPTAutoConfiguration {
 
     @Bean
-    public OpenAIChatAPI openAIChatAPI(@Value("${openai.api.key}") String openaiApiKey) {
-        WebClient webClient = WebClient.builder().defaultHeader("Authorization", "Bearer " + openaiApiKey).build();
+    public OpenAIChatAPI openAIChatAPI(@Value("${openai.api.key}") String openaiApiKey,
+                                       @Value("${openai.api.url:https://api.openai.com/v1}") final String openaiApiUrl) throws Exception {
+        URL url = new URL(openaiApiUrl);
+        String baseUrl = openaiApiUrl;
+        if (openaiApiUrl.contains("/chat/")) {
+            baseUrl = openaiApiUrl.substring(0, openaiApiUrl.lastIndexOf("/chat/"));
+        }
+        WebClient webClient;
+        if (url.getHost().contains("openai.azure.com")) {
+            String apiVersion = openaiApiUrl.substring(openaiApiUrl.lastIndexOf("api-version=") + 12);
+            if (apiVersion.contains("&")) {
+                apiVersion = apiVersion.substring(0, apiVersion.indexOf("&"));
+            }
+            final String apiVersionValue = apiVersion;
+            // append api-version parameter for url
+            ExchangeFilterFunction appendVersionParamFilter = (clientRequest, nextFilter) -> {
+                String oldUrl = clientRequest.url().toString();
+                URI newUrl = URI.create(oldUrl + "?api-version=" + apiVersionValue);
+                ClientRequest filteredRequest = ClientRequest.from(clientRequest).url(newUrl).build();
+                return nextFilter.exchange(filteredRequest);
+            };
+            webClient = WebClient.builder()
+                    .defaultHeader("api-key", openaiApiKey)
+                    .baseUrl(baseUrl)
+                    .filter(appendVersionParamFilter)
+                    .build();
+        } else {
+            webClient = WebClient.builder()
+                    .defaultHeader("Authorization", "Bearer " + openaiApiKey)
+                    .baseUrl(baseUrl)
+                    .build();
+        }
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder().clientAdapter(WebClientAdapter.forClient(webClient)).build();
         return httpServiceProxyFactory.createClient(OpenAIChatAPI.class);
 
