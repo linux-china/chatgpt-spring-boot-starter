@@ -6,7 +6,7 @@ import jakarta.annotation.Nonnull;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatMessage {
-    private String role;
+    private ChatMessageRole role;
     private String content;
     /**
      * the name of the author of this message
@@ -19,23 +19,23 @@ public class ChatMessage {
     public ChatMessage() {
     }
 
-    public ChatMessage(String role, String content) {
+    public ChatMessage(ChatMessageRole role, String content) {
         this.role = role;
         this.content = content;
     }
 
-    public ChatMessage(String role, String content, String name, FunctionCall functionCall) {
+    public ChatMessage(ChatMessageRole role, String content, String name, FunctionCall functionCall) {
         this.role = role;
         this.content = content;
         this.name = name;
         this.functionCall = functionCall;
     }
 
-    public String getRole() {
+    public ChatMessageRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(ChatMessageRole role) {
         this.role = role;
     }
 
@@ -64,14 +64,14 @@ public class ChatMessage {
     }
 
     public static ChatMessage systemMessage(@Nonnull String content) {
-        return new ChatMessage("system", content);
+        return new ChatMessage(ChatMessageRole.system, content);
     }
 
     public static ChatMessage userMessage(@Nonnull String content) {
-        return new ChatMessage("user", content);
+        return new ChatMessage(ChatMessageRole.user, content);
     }
 
     public static ChatMessage assistantMessage(@Nonnull String content) {
-        return new ChatMessage("assistant", content);
+        return new ChatMessage(ChatMessageRole.assistant, content);
     }
 }
