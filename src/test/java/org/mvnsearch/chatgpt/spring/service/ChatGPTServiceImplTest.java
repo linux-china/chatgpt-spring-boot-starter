@@ -4,7 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
 import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
 import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
-import org.mvnsearch.chatgpt.model.ChatMessage;
+import org.mvnsearch.chatgpt.model.ChatRequestBuilder;
+import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -21,21 +22,24 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     }
 
     @Test
-    public void testExecuteSQLQuery() {
+    public void testExecuteSQLQuery() throws Exception {
         String context = "You are SQL developer. Write SQL according to requirements, and execute it in MySQL database.";
         final String prompt = "Query all employees whose salary is greater than the average.";
-        final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("execute_sql_query"));
-        // add prompt context as system message
-        request.addMessage(ChatMessage.systemMessage(context));
-        final ChatCompletionResponse response = chatGPTService.chat(request).block();
-        System.out.println(response.getReplyCombinedText());
+        final ChatCompletionRequest request = ChatRequestBuilder.of(context, prompt)
+                .function("execute_sql_query")
+                .build();
+        System.out.println(GPTFunctionUtils.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
+        // final ChatCompletionResponse response = chatGPTService.chat(request).block();
+        // System.out.println(response.getReplyCombinedText());
     }
 
 
     @Test
     public void testChatWithFunctions() throws Exception {
         final String prompt = "Hi Jackie, could you write an email to Libing(libing.chen@gmail.com) and Sam(linux_china@hotmail.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!";
-        final ChatCompletionRequest request = ChatCompletionRequest.functions(prompt, List.of("send_email"));
+        final ChatCompletionRequest request = ChatRequestBuilder.of(prompt)
+                .function("send_email")
+                .build();
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
         // display reply combined text with function call
         System.out.println(response.getReplyCombinedText());
