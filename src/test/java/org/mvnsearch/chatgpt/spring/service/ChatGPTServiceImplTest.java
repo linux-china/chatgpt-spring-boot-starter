@@ -7,6 +7,8 @@ import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
 import org.mvnsearch.chatgpt.model.ChatRequestBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.mvnsearch.chatgpt.demo.service.PromptManager.prompt;
+
 public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Autowired
     private ChatGPTService chatGPTService;
@@ -20,9 +22,8 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 
     @Test
     public void testExecuteSQLQuery() throws Exception {
-        String context = "You are SQL developer. Write SQL according to requirements, and execute it in MySQL database.";
         final String prompt = "Query all employees whose salary is greater than the average.";
-        final ChatCompletionRequest request = ChatRequestBuilder.of(context, prompt)
+        final ChatCompletionRequest request = ChatRequestBuilder.of(prompt("sql-developer"), prompt)
                 .function("execute_sql_query")
                 .build();
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
@@ -48,4 +49,5 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
             }
         }*/
     }
+
 }
