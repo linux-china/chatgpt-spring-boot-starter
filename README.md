@@ -159,6 +159,12 @@ at [chat.gpt file](./chat.gpt).
 How to manage prompts in Java? Now my suggestion is to adopt properties file format, and use MessageFormat to format.
 Please take a look at [PromptManager](src/test/java/org/mvnsearch/chatgpt/demo/service/PromptManager.java)
 
+# FAQ
+
+### OpenAI REST API proxy
+
+Please use `http://localhost:8080/v1/chat/completions`
+
 # References
 
 * [OpenAI chat API](https://platform.openai.com/docs/api-reference/chat)
