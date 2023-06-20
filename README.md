@@ -154,6 +154,11 @@ If you want to have a simple test for ChatGPT functions, you can install [ChatGP
 JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown), and take a look
 at [chat.gpt file](./chat.gpt).
 
+# Prompt templates
+
+How to manage prompts in Java? Now my suggestion is to adopt properties file format, and use MessageFormat to format.
+Please take a look at [PromptManager](src/test/java/org/mvnsearch/chatgpt/demo/service/PromptManager.java)
+
 # References
 
 * [OpenAI chat API](https://platform.openai.com/docs/api-reference/chat)
