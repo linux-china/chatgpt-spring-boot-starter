@@ -5,10 +5,7 @@ import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
 import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
 import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
 import org.mvnsearch.chatgpt.model.ChatRequestBuilder;
-import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Autowired
@@ -28,9 +25,8 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
         final ChatCompletionRequest request = ChatRequestBuilder.of(context, prompt)
                 .function("execute_sql_query")
                 .build();
-        System.out.println(GPTFunctionUtils.objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request));
-        // final ChatCompletionResponse response = chatGPTService.chat(request).block();
-        // System.out.println(response.getReplyCombinedText());
+        final ChatCompletionResponse response = chatGPTService.chat(request).block();
+        System.out.println(response.getReplyCombinedText());
     }
 
 
