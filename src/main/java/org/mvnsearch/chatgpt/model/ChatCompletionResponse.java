@@ -102,7 +102,7 @@ public class ChatCompletionResponse {
                     sb.append(message.getContent());
                 }
                 final FunctionCall functionCall = message.getFunctionCall();
-                if (functionCall != null) {
+                if (functionCall != null && functionCall.getFunctionStub() != null) {
                     try {
                         final Object result = functionCall.getFunctionStub().call();
                         if (result != null) {
