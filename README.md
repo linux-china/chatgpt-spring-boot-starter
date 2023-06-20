@@ -154,16 +154,34 @@ If you want to have a simple test for ChatGPT functions, you can install [ChatGP
 JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown), and take a look
 at [chat.gpt file](./chat.gpt).
 
-# Prompt templates
-
-How to manage prompts in Java? Now my suggestion is to adopt properties file format, and use MessageFormat to format.
-Please take a look at [PromptManager](src/test/java/org/mvnsearch/chatgpt/demo/service/PromptManager.java)
-
 # FAQ
 
 ### OpenAI REST API proxy
 
-Please use `http://localhost:8080/v1/chat/completions`
+Please refer [OpenAIProxyController](src/test/java/org/mvnsearch/chatgpt/demo/OpenAIProxyController.java).
+
+```java
+
+@RestController
+public class OpenAIProxyController {
+    @Autowired
+    private ChatGPTService chatGPTService;
+    
+    @PostMapping("/v1/chat/completions")
+    public Publisher<ChatCompletionResponse> completions(@RequestBody ChatCompletionRequest request) {
+        if (request.getStream() == null || !request.getStream()) {
+            return chatGPTService.chat(request);
+        } else {
+            return chatGPTService.stream(request);
+        }
+    }
+}
+```
+
+### Prompt templates
+
+How to manage prompts in Java? Now my suggestion is to adopt properties file format, and use MessageFormat to format.
+Please take a look at [PromptManager](src/test/java/org/mvnsearch/chatgpt/demo/service/PromptManager.java)
 
 # References
 
