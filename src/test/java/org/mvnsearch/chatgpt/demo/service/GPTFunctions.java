@@ -28,7 +28,7 @@ public class GPTFunctions implements GPTFunctionsStub {
             @Parameter("Content of email") String content) {
     }
 
-    @GPTFunction(name = "send_email", value = "Send email to receiver")
+    @GPTFunction(name = "send_email", value = "Send email to recipients")
     public String sendEmail(SendEmailRequest request) {
         System.out.println("Recipients: " + String.join(",", request.recipients));
         System.out.println("Subject:" + request.subject);
