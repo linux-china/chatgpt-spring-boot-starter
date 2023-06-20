@@ -165,18 +165,16 @@ Please refer [OpenAIProxyController](src/test/java/org/mvnsearch/chatgpt/demo/Op
 @RestController
 public class OpenAIProxyController {
     @Autowired
-    private ChatGPTService chatGPTService;
-    
+    private OpenAIChatAPI openAIChatAPI;
+
     @PostMapping("/v1/chat/completions")
     public Publisher<ChatCompletionResponse> completions(@RequestBody ChatCompletionRequest request) {
-        if (request.getStream() == null || !request.getStream()) {
-            return chatGPTService.chat(request);
-        } else {
-            return chatGPTService.stream(request);
-        }
+        return openAIChatAPI.proxy(request);
     }
 }
 ```
+
+Of course, you can use standard URL `http://localhost:8080/v1/chat/completions` to call Azure OpenAI API.
 
 ### Prompt templates
 
