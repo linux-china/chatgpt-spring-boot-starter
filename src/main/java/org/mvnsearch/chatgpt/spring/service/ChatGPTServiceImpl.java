@@ -40,6 +40,7 @@ public class ChatGPTServiceImpl implements ChatGPTService {
     @Override
     public Mono<ChatCompletionResponse> chat(ChatCompletionRequest request) {
         injectFunctions(request);
+        request.setStream(null);
         boolean functionsIncluded = request.getFunctions() != null;
         if (!functionsIncluded) {
             return openAIChatAPI.chat(request);
