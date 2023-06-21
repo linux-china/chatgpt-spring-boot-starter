@@ -6,7 +6,7 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 public class PromptManager {
-    private static final String BUNDLE_FQN = "demo.prompts";
+    private static final String BUNDLE_FQN = "prompts";
     // Use ResourceBundle instead of Properties to support different prompts in different languages
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_FQN);
 
