@@ -1,10 +1,10 @@
 package org.mvnsearch.chatgpt.demo.service;
 
 import org.mvnsearch.chatgpt.model.ChatCompletion;
-import org.mvnsearch.chatgpt.model.ChatGPTExchange;
+import org.mvnsearch.chatgpt.model.GPTExchange;
 import reactor.core.publisher.Mono;
 
-@ChatGPTExchange
+@GPTExchange
 public interface GPTHelloService {
 
     @ChatCompletion("You are a language translator, please translate the below text to Chinese.\n")
