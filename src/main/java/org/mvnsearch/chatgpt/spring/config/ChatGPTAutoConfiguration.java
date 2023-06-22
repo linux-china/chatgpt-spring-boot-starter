@@ -8,6 +8,7 @@ import org.mvnsearch.chatgpt.model.function.Parameter;
 import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTServiceImpl;
+import org.mvnsearch.chatgpt.spring.exchange.ChatGPTServiceProxyFactory;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -85,5 +86,10 @@ public class ChatGPTAutoConfiguration {
     public ChatGPTService chatGPTService(OpenAIChatAPI openAIChatAPI,
                                          Optional<List<GPTFunctionsStub>> stubs) throws Exception {
         return new ChatGPTServiceImpl(openAIChatAPI, stubs.orElse(Collections.emptyList()));
+    }
+
+    @Bean
+    public ChatGPTServiceProxyFactory chatGPTServiceProxyFactory(ChatGPTService chatGPTService) {
+        return new ChatGPTServiceProxyFactory(chatGPTService);
     }
 }
