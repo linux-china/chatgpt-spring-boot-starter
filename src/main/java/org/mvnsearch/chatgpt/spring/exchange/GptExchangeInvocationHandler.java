@@ -12,12 +12,12 @@ import java.util.Arrays;
 public class GptExchangeInvocationHandler implements InvocationHandler {
     private final ChatGPTService chatGPTService;
     private final Class<?> interfaceClass;
-    private final ChatGPTExchange gptExchange;
+    private final GPTExchange gptExchangeAnnotation;
 
     public GptExchangeInvocationHandler(ChatGPTService chatGPTService, Class<?> interfaceClass) {
         this.chatGPTService = chatGPTService;
         this.interfaceClass = interfaceClass;
-        this.gptExchange = interfaceClass.getAnnotation(ChatGPTExchange.class);
+        this.gptExchangeAnnotation = interfaceClass.getAnnotation(GPTExchange.class);
     }
 
     @Override
@@ -48,18 +48,18 @@ public class GptExchangeInvocationHandler implements InvocationHandler {
         ChatCompletionRequest request = new ChatCompletionRequest();
         request.addMessage(ChatMessage.userMessage(prompt));
         // inject global configuration
-        if (gptExchange != null) {
+        if (gptExchangeAnnotation != null) {
             if ((functions == null || functions.length == 0)) {
-                functions = gptExchange.functions();
+                functions = gptExchangeAnnotation.functions();
             }
-            if (gptExchange.temperature() > 0) {
-                request.setTemperature(gptExchange.temperature());
+            if (gptExchangeAnnotation.temperature() > 0) {
+                request.setTemperature(gptExchangeAnnotation.temperature());
             }
-            if (gptExchange.maxTokens() > 0) {
-                request.setMaxTokens(gptExchange.maxTokens());
+            if (gptExchangeAnnotation.maxTokens() > 0) {
+                request.setMaxTokens(gptExchangeAnnotation.maxTokens());
             }
-            if (gptExchange.value() != null && !gptExchange.value().isEmpty()) {
-                request.setModel(gptExchange.value());
+            if (gptExchangeAnnotation.value() != null && !gptExchangeAnnotation.value().isEmpty()) {
+                request.setModel(gptExchangeAnnotation.value());
             }
         }
         if (functions != null && functions.length > 0) {
