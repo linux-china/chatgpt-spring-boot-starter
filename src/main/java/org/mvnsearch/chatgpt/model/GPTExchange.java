@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ChatGPTExchange {
+public @interface GPTExchange {
     String value() default "gpt-3.5-turbo";
 
     @AliasFor("value")
