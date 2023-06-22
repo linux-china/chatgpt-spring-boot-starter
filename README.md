@@ -24,7 +24,7 @@ Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
 <dependency>
     <groupId>org.mvnsearch</groupId>
     <artifactId>chatgpt-spring-boot-starter</artifactId>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
@@ -65,6 +65,35 @@ public class ChatRobotController {
                 .map(ChatCompletionResponse::getReplyText);
     }
 }
+```
+
+# ChatGPT Interface
+
+ChatGPT service interface is almost
+like [Spring 6 HTTP Interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface).
+You can declare a ChatGPT service interface with `@ChatGPTExchange` annotation, and declare completion methods
+with `@ChatCompletion` annotation, then you just call service interface directly.
+
+```java
+
+@GPTExchange
+public interface GPTHelloService {
+
+    @ChatCompletion("You are a language translator, please translate the below text to Chinese.\n")
+    Mono<String> translateIntoChinese(String text);
+
+    @ChatCompletion("You are a language translator, please translate the below text from {0} to {1}.\n {2}")
+    Mono<String> translate(String sourceLanguage, String targetLanguage, String text);
+}
+```
+
+Create ChatGPT interface service bean:
+
+```
+    @Bean
+    public GPTHelloService gptHelloService(ChatGPTServiceProxyFactory proxyFactory) {
+        return proxyFactory.createClient(GPTHelloService.class);
+    }
 ```
 
 # ChatGPT functions
@@ -139,6 +168,8 @@ public class ChatGPTServiceImplTest {
     }
 }
 ```
+
+**Note**: `@GPTExchange` and `@ChatCompletion` has functions built-in, so you just need to fill functions parameters.
 
 ### ChatGPT Functions use cases:
 
