@@ -11,7 +11,12 @@ public class GPTHelloServiceTest extends ProjectBootBaseTest {
     private GPTHelloService helloService;
 
     @Test
+    public void testTranslateIntoChinse() throws Exception {
+        System.out.println(helloService.translateIntoChinese("Hello").block());
+    }
+
+    @Test
     public void testTranslate() throws Exception {
-        System.out.println(helloService.translate("Hello").block());
+        System.out.println(helloService.translate("Chinese", "English", "你好！").block());
     }
 }
