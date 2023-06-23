@@ -183,9 +183,8 @@ public class ChatGPTServiceImplTest {
 * PipeLine: you can think function as a node in pipeline. After process by function, and you can pass it to ChatGPT
   again.
 
-If you want to have a simple test for ChatGPT functions, you can install [ChatGPT with Markdown
-JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown), and take a look
-at [chat.gpt file](./chat.gpt).
+If you want to have a simple test for ChatGPT functions, you can install [ChatGPT with Markdown JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown),
+and take a look at [chat.gpt file](./chat.gpt).
 
 # Prompt Templates
 
@@ -221,6 +220,7 @@ You can declare prompt as function and chain them together.
 To keep placeholders safe in prompt template, you can use record as Lambda parameter.
 
 ```java
+public class PromptTest {
     public record TranslateRequest(String from, String to, String text) {
     }
 
@@ -232,6 +232,7 @@ To keep placeholders safe in prompt template, you can use record as Lambda param
                 .block();
         System.out.println(result);
     }
+}
 ```
 
 # FAQ
