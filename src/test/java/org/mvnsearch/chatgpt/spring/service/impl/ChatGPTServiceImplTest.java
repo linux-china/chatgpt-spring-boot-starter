@@ -13,6 +13,8 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.function.Function;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Autowired
     private ChatGPTService chatGPTService;
@@ -29,7 +31,7 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Test
     public void testExecuteSQLQuery() throws Exception {
         final String prompt = "Query all employees whose salary is greater than the average.";
-        final ChatCompletionRequest request = ChatRequestBuilder.of(promptManager.prompt("sql-developer"), prompt)
+        final ChatCompletionRequest request = ChatRequestBuilder.of(promptManager.prompt("sql-developer", prompt))
                 .function("execute_sql_query")
                 .build();
         String result = chatGPTService.chat(request).flatMap(ChatCompletionResponse::getReplyCombinedText).block();
@@ -59,7 +61,7 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Test
     public void testPromptAsFunction() {
         Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService.promptAsLambda("translate-into-chinese");
-        Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsLambda("send-email", List.of("send_email"));
+        Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsLambda("send-email", "send_email");
         String result = Mono.just("Hi Jackie, could you write an email to Libing(libing.chen@exaple.com) and Sam(linux_china@example.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!")
                 .flatMap(translateIntoChineseFunction)
                 .flatMap(sendEmailFunction)
@@ -77,5 +79,14 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
                 .flatMap(translateFunction)
                 .block();
         System.out.println(result);
+    }
+
+    @Test
+    public void testLambdaWithFunctionResult() {
+        Function<String, Mono<List<String>>> executeSqlQuery = chatGPTService.promptAsLambda("sql-developer", "execute_sql_query");
+        List<String> result = Mono.just("Query all employees whose salary is greater than the average.")
+                .flatMap(executeSqlQuery)
+                .block();
+        assertThat(result).isNotEmpty();
     }
 }
