@@ -66,4 +66,16 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
                 .block();
         System.out.println(result);
     }
+
+    public record TranslateRequest(String from, String to, String text) {
+    }
+
+    @Test
+    public void testLambdaWithRecord() {
+        Function<TranslateRequest, Mono<String>> translateFunction = chatGPTService.promptAsLambda("translate");
+        String result = Mono.just(new TranslateRequest("Chinese", "English", "你好！"))
+                .flatMap(translateFunction)
+                .block();
+        System.out.println(result);
+    }
 }
