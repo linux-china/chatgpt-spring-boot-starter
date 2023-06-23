@@ -66,9 +66,13 @@ public class ChatCompletionResponse {
         this.object = object;
     }
 
+    public boolean isEmpty() {
+        return choices == null || choices.isEmpty();
+    }
+
     @JsonIgnore
     public List<ChatMessage> getReply() {
-        if (this.choices == null || this.choices.isEmpty()) return Collections.emptyList();
+        if (isEmpty()) return Collections.emptyList();
         return this.choices.stream().map(ChatCompletionChoice::getMessage).toList();
     }
 
@@ -79,7 +83,7 @@ public class ChatCompletionResponse {
      */
     @JsonIgnore
     public String getReplyText() {
-        if (this.choices == null || this.choices.isEmpty()) return "";
+        if (isEmpty()) return "";
         StringBuilder sb = new StringBuilder();
         for (ChatCompletionChoice choice : choices) {
             final ChatMessage message = choice.getMessage();
@@ -92,7 +96,7 @@ public class ChatCompletionResponse {
 
     @JsonIgnore
     public Mono<String> getReplyCombinedText() {
-        if (this.choices == null || this.choices.isEmpty()) return Mono.empty();
+        if (isEmpty()) return Mono.empty();
         return Flux.fromIterable(choices).flatMap(choice -> {
                     final ChatMessage message = choice.getMessage();
                     if (message != null) {
@@ -100,6 +104,15 @@ public class ChatCompletionResponse {
                     }
                     return Mono.empty();
                 }).collectList()
-                .map(items -> items.stream().filter(Objects::nonNull).map(String::valueOf).collect(Collectors.joining()));
+                .map(items -> items.stream().filter(Objects::nonNull).collect(Collectors.joining()));
+    }
+
+    @JsonIgnore
+    public <T> Mono<T> getFunctionResult() {
+        if (isEmpty()) return Mono.empty();
+        return Flux.fromIterable(choices)
+                .filter(choice -> choice.getMessage() != null && choice.getMessage().getFunctionCall() != null)
+                .last()
+                .flatMap(choice -> choice.getMessage().getFunctionResult());
     }
 }
