@@ -52,7 +52,10 @@ public class GptExchangeInvocationHandler implements InvocationHandler {
             if ((functions == null || functions.length == 0)) {
                 functions = gptExchangeAnnotation.functions();
             }
-            if (gptExchangeAnnotation.temperature() > 0) {
+            if (!gptExchangeAnnotation.value().isEmpty()) {
+                request.setModel(gptExchangeAnnotation.value());
+            }
+            if (gptExchangeAnnotation.temperature() >= 0) {
                 request.setTemperature(gptExchangeAnnotation.temperature());
             }
             if (gptExchangeAnnotation.maxTokens() > 0) {
