@@ -10,6 +10,7 @@ import org.mvnsearch.chatgpt.spring.service.PromptManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
@@ -57,8 +58,8 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 
     @Test
     public void testPromptAsFunction() {
-        Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService.promptAsFunction("translate-into-chinese");
-        Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsFunction("send-email");
+        Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService.promptAsLambda("translate-into-chinese");
+        Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsLambda("send-email", List.of("send_email"));
         String result = Mono.just("Hi Jackie, could you write an email to Libing(libing.chen@exaple.com) and Sam(linux_china@example.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!")
                 .flatMap(translateIntoChineseFunction)
                 .flatMap(sendEmailFunction)
