@@ -1,17 +1,19 @@
-package org.mvnsearch.chatgpt.spring.service;
+package org.mvnsearch.chatgpt.spring.service.impl;
 
 import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
 import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
 import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
 import org.mvnsearch.chatgpt.model.ChatRequestBuilder;
+import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
+import org.mvnsearch.chatgpt.spring.service.PromptManager;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.mvnsearch.chatgpt.demo.service.PromptManager.prompt;
 
 public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Autowired
     private ChatGPTService chatGPTService;
+    @Autowired
+    private PromptManager promptManager;
 
     @Test
     public void testSimpleChat() {
@@ -23,7 +25,7 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Test
     public void testExecuteSQLQuery() throws Exception {
         final String prompt = "Query all employees whose salary is greater than the average.";
-        final ChatCompletionRequest request = ChatRequestBuilder.of(prompt("sql-developer"), prompt)
+        final ChatCompletionRequest request = ChatRequestBuilder.of(promptManager.prompt("sql-developer"), prompt)
                 .function("execute_sql_query")
                 .build();
         String result = chatGPTService.chat(request).flatMap(ChatCompletionResponse::getReplyCombinedText).block();
