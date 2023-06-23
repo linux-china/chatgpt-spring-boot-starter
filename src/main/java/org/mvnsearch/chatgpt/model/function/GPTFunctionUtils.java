@@ -2,6 +2,7 @@ package org.mvnsearch.chatgpt.model.function;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,6 +112,31 @@ public class GPTFunctionUtils {
         final Class<?> parameterType = function.getParameterType();
         final Object param = objectMapper.readValue(argumentsJson, parameterType);
         return javaMethod.invoke(target, param);
+    }
+
+    /**
+     * convert object to text plain to display
+     *
+     * @param object object
+     * @return object's text
+     */
+    public static String toTextPlain(@Nullable Object object) {
+        if (object != null) {
+            if (object instanceof String) {
+                return (String) object;
+            } else {
+                try {
+                    final String jsonText = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+                    if (jsonText.startsWith("\"") && jsonText.endsWith("\"")) {
+                        return jsonText.substring(1, jsonText.length() - 1);
+                    }
+                    return jsonText;
+                } catch (Exception ignore) {
+
+                }
+            }
+        }
+        return "";
     }
 
     /**
