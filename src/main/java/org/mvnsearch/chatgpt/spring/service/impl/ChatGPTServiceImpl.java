@@ -1,10 +1,11 @@
-package org.mvnsearch.chatgpt.spring.service;
+package org.mvnsearch.chatgpt.spring.service.impl;
 
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
 import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
+import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
