@@ -12,7 +12,7 @@ import org.mvnsearch.chatgpt.spring.service.PromptManager;
 import org.mvnsearch.chatgpt.spring.service.PromptStore;
 import org.mvnsearch.chatgpt.spring.service.impl.ChatGPTServiceImpl;
 import org.mvnsearch.chatgpt.spring.service.impl.PromptManagerImpl;
-import org.mvnsearch.chatgpt.spring.service.impl.PromptsStoreImpl;
+import org.mvnsearch.chatgpt.spring.service.impl.PromptPropertiesStoreImpl;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -88,7 +88,7 @@ public class ChatGPTAutoConfiguration {
 
     @Bean
     public PromptStore promptsPropertiesStore() {
-        return new PromptsStoreImpl();
+        return new PromptPropertiesStoreImpl();
     }
 
     @Bean
