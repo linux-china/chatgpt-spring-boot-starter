@@ -91,11 +91,10 @@ public class GptExchangeInvocationHandler implements InvocationHandler {
         }
         if (functions != null && functions.length > 0) {
             request.setFunctionNames(Arrays.stream(functions).toList());
-            return chatGPTService.chat(request).map(ChatCompletionResponse::getReplyCombinedText);
+            return chatGPTService.chat(request).flatMap(ChatCompletionResponse::getReplyCombinedText);
         } else {
             return chatGPTService.chat(request).map(ChatCompletionResponse::getReplyText);
         }
-
     }
 
     public String formatChatMessage(String role, String content, Object[] args) {
