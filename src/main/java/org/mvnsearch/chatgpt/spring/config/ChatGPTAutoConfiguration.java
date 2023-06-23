@@ -97,9 +97,9 @@ public class ChatGPTAutoConfiguration {
     }
 
     @Bean
-    public ChatGPTService chatGPTService(OpenAIChatAPI openAIChatAPI,
+    public ChatGPTService chatGPTService(OpenAIChatAPI openAIChatAPI, PromptManager promptManager,
                                          Optional<List<GPTFunctionsStub>> stubs) throws Exception {
-        return new ChatGPTServiceImpl(openAIChatAPI, stubs.orElse(Collections.emptyList()));
+        return new ChatGPTServiceImpl(openAIChatAPI, promptManager, stubs.orElse(Collections.emptyList()));
     }
 
     @Bean
