@@ -14,6 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.RecordComponent;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,12 @@ public class ChatGPTServiceImpl implements ChatGPTService {
     }
 
     @Override
-    public <T> Function<T, Mono<String>> promptAsFunction(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey) {
+    public <T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey) {
+        return promptAsLambda(promptKey, Collections.EMPTY_LIST);
+    }
+
+    @Override
+    public <T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey, List<String> functionNames) {
         return obj -> {
             String prompt;
             if (obj != null) {
@@ -122,7 +128,12 @@ public class ChatGPTServiceImpl implements ChatGPTService {
                 prompt = promptManager.prompt(promptKey);
             }
             final ChatCompletionRequest request = ChatRequestBuilder.of(prompt).model(model).build();
-            return chat(request).map(ChatCompletionResponse::getReplyText);
+            if (!functionNames.isEmpty()) {
+                request.setFunctionNames(functionNames);
+                return chat(request).flatMap(ChatCompletionResponse::getReplyCombinedText);
+            } else {
+                return chat(request).map(ChatCompletionResponse::getReplyText);
+            }
         };
     }
 
