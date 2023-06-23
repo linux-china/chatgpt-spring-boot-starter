@@ -1,6 +1,6 @@
 package org.mvnsearch.chatgpt.model;
 
-import org.springframework.core.annotation.AliasFor;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 import java.lang.annotation.*;
 
@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 public @interface GPTExchange {
     String value() default "";
 
-    @AliasFor("value")
+    @JsonAlias("value")
     String model() default "";
 
     double temperature() default -1;
