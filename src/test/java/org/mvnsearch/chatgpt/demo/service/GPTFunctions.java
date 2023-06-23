@@ -6,6 +6,7 @@ import org.mvnsearch.chatgpt.model.function.GPTFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
 import org.mvnsearch.chatgpt.model.function.Parameter;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -17,9 +18,9 @@ public class GPTFunctions implements GPTFunctionsStub {
     }
 
     @GPTFunction(name = "execute_sql_query", value = "Execute SQL query and return the result set")
-    public String executeSQLQuery(SQLQueryRequest request) {
+    public Mono<String> executeSQLQuery(SQLQueryRequest request) {
         System.out.println("Execute SQL: " + request.sql);
-        return "id, name, salary\n1,Jackie,8000\n2,Libing,78000\n3,Sam,7500";
+        return Mono.just("id, name, salary\n1,Jackie,8000\n2,Libing,78000\n3,Sam,7500");
     }
 
     public record SendEmailRequest(
