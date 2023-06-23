@@ -30,7 +30,7 @@ Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
 </dependency>
 ```
 
-### Add configuration
+### Adjust configuration
 
 Add `openai.api.key` in `application.properties`:
 
@@ -69,10 +69,9 @@ public class ChatRobotController {
 }
 ```
 
-# ChatGPT Interface
+# ChatGPT Service Interface
 
-ChatGPT service interface is almost
-like [Spring 6 HTTP Interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface).
+ChatGPT service interface is almost like [Spring 6 HTTP Interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface).
 You can declare a ChatGPT service interface with `@ChatGPTExchange` annotation, and declare completion methods
 with `@ChatCompletion` annotation, then you just call service interface directly.
 
@@ -220,8 +219,8 @@ You can declare prompt as function and chain them together.
 
 To keep placeholders safe in prompt template, you can use record as Lambda parameter.
 
-```
-   public record TranslateRequest(String from, String to, String text) {
+```java
+    public record TranslateRequest(String from, String to, String text) {
     }
 
     @Test
