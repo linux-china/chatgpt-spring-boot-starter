@@ -3,6 +3,7 @@ package org.mvnsearch.chatgpt.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nonnull;
+import reactor.core.publisher.Mono;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatMessage {
@@ -61,6 +62,27 @@ public class ChatMessage {
 
     public void setFunctionCall(FunctionCall functionCall) {
         this.functionCall = functionCall;
+    }
+
+    Mono<?> getReplyCombinedText() {
+        if (content != null) {
+            return Mono.just(content);
+        }
+        if (functionCall != null && functionCall.getFunctionStub() != null) {
+            try {
+                final Object result = functionCall.getFunctionStub().call();
+                if (result != null) {
+                    if (result instanceof Mono) {
+                        return (Mono<?>) result;
+                    } else {
+                        return Mono.justOrEmpty(result);
+                    }
+                }
+            } catch (Exception e) {
+                return Mono.error(e);
+            }
+        }
+        return Mono.empty();
     }
 
     public static ChatMessage systemMessage(@Nonnull String content) {
