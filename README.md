@@ -9,7 +9,8 @@ Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 * Async with Spring Webflux
 * Support ChatGPT Chat Stream
 * Support ChatGPT functions: `@GPTFunction` annotation
-* Prompt Management: load prompt templates from `prompt.properties`
+* Prompt Management: load prompt templates from `prompt.properties` with `@PropertyKey`, and friendly with IntelliJ IDEA
+* Prompt as Lambda: convert prompt template to lambda expression and call it with FP style
 * ChatGPT interface: Declare ChatGPT service interface with `@ChatGPTExchange` and `@ChatCompletion` annotations.
 * No third-party library: base on Spring 6 HTTP interface
 * GraalVM native image support
