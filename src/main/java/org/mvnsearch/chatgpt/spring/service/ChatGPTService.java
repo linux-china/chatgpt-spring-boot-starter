@@ -6,6 +6,7 @@ import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.function.Function;
 
 import static org.mvnsearch.chatgpt.spring.service.PromptManager.PROMPTS_FQN;
@@ -15,5 +16,7 @@ public interface ChatGPTService {
 
     Flux<ChatCompletionResponse> stream(ChatCompletionRequest request);
 
-   <T> Function<T, Mono<String>> promptAsFunction(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey);
+    <T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey);
+
+    <T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey, List<String> functionNames);
 }
