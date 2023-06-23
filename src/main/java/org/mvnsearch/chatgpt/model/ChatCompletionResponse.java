@@ -96,24 +96,7 @@ public class ChatCompletionResponse {
         return Flux.fromIterable(choices).flatMap(choice -> {
                     final ChatMessage message = choice.getMessage();
                     if (message != null) {
-                        if (message.getContent() != null) {
-                            return Mono.just(message.getContent());
-                        }
-                        final FunctionCall functionCall = message.getFunctionCall();
-                        if (functionCall != null && functionCall.getFunctionStub() != null) {
-                            try {
-                                final Object result = functionCall.getFunctionStub().call();
-                                if (result != null) {
-                                    if (result instanceof Mono) {
-                                        return (Mono<?>) result;
-                                    } else {
-                                        return Mono.justOrEmpty(result);
-                                    }
-                                }
-                            } catch (Exception e) {
-                                return Mono.error(e);
-                            }
-                        }
+                        return message.getReplyCombinedText();
                     }
                     return Mono.empty();
                 }).collectList()
