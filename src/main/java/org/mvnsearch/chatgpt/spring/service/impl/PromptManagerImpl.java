@@ -1,5 +1,6 @@
 package org.mvnsearch.chatgpt.spring.service.impl;
 
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
 import org.mvnsearch.chatgpt.spring.service.PromptManager;
 import org.mvnsearch.chatgpt.spring.service.PromptStore;
@@ -28,6 +29,22 @@ public class PromptManagerImpl implements PromptManager {
         } else {
             return "!!!" + key + "!!!";
         }
+    }
+
+    @Override
+    public Map<String, String> getAllPrompts() {
+        return allPrompts;
+    }
+
+    @Override
+    @Nullable
+    public String getRawPrompt(String key) {
+        return allPrompts.get(key);
+    }
+
+    @Override
+    public boolean containsPrompt(String key) {
+        return allPrompts.containsKey(key);
     }
 
 }
