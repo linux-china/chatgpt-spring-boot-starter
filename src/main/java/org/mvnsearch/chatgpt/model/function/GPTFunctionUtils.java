@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -30,7 +31,7 @@ public class GPTFunctionUtils {
      */
     public static Map<String, ChatGPTJavaFunction> extractFunctions(Class<?> clazz) throws Exception {
         Map<String, ChatGPTJavaFunction> functionDeclares = new HashMap<>();
-        for (Method method : clazz.getMethods()) {
+        for (Method method : clazz.getDeclaredMethods()) {// support non-public callback functions
             //check GPT function or not
             final GPTFunction gptFunctionAnnotation = method.getAnnotation(GPTFunction.class);
             if (gptFunctionAnnotation != null) {
@@ -82,12 +83,12 @@ public class GPTFunctionUtils {
 
     private static String getJsonSchemaType(Class<?> clazz) {
         if (clazz.equals(Integer.class) || clazz.equals(int.class)
-                || clazz.equals(Long.class) || clazz.equals(long.class)) {
+            || clazz.equals(Long.class) || clazz.equals(long.class)) {
             return "integer";
         } else if (clazz.equals(Boolean.class) || clazz.equals(boolean.class)) {
             return "boolean";
         } else if (clazz.equals(Double.class) || clazz.equals(double.class)
-                || clazz.equals(Float.class) || clazz.equals(float.class)) {
+                   || clazz.equals(Float.class) || clazz.equals(float.class)) {
             return "number";
         } else if (clazz.equals(String.class)) {
             return "string";
@@ -108,7 +109,9 @@ public class GPTFunctionUtils {
      * @throws Exception exception
      */
     public static Object callGPTFunction(Object target, ChatGPTJavaFunction function, String argumentsJson) throws Exception {
+        log.info("attempting to call GPTFunction on target [" + target.getClass().getName() + "] with arguments [" + argumentsJson + "]");
         final Method javaMethod = function.getJavaMethod();
+        ReflectionUtils.makeAccessible(javaMethod);
         final Class<?> parameterType = function.getParameterType();
         final Object param = objectMapper.readValue(argumentsJson, parameterType);
         return javaMethod.invoke(target, param);

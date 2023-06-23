@@ -3,48 +3,29 @@ package org.mvnsearch.chatgpt.spring.service.impl;
 import org.jetbrains.annotations.PropertyKey;
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
-import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
-import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
 import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.mvnsearch.chatgpt.spring.service.PromptManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.lang.reflect.RecordComponent;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import static org.mvnsearch.chatgpt.spring.service.PromptManager.PROMPTS_FQN;
 
-public class ChatGPTServiceImpl implements ChatGPTService {
-    private static final Logger log = LoggerFactory.getLogger(ChatGPTServiceImpl.class);
+class ChatGPTServiceImpl implements ChatGPTService {
+
     private final OpenAIChatAPI openAIChatAPI;
     private final PromptManager promptManager;
+    private final GPTFunctionRegistry registry;
     private String model = "gpt-3.5-turbo";
-    private final Map<String, ChatGPTJavaFunction> allJsonSchemaFunctions = new HashMap<>();
-    private final Map<String, ChatFunction> allChatFunctions = new HashMap<>();
 
-    public ChatGPTServiceImpl(OpenAIChatAPI openAIChatAPI, PromptManager promptManager, List<GPTFunctionsStub> stubs) throws Exception {
+      ChatGPTServiceImpl(OpenAIChatAPI openAIChatAPI, PromptManager promptManager, GPTFunctionRegistry registry) throws Exception {
         this.openAIChatAPI = openAIChatAPI;
         this.promptManager = promptManager;
-        for (GPTFunctionsStub functionStub : stubs) {
-            final Map<String, ChatGPTJavaFunction> functions = GPTFunctionUtils.extractFunctions(functionStub.getClass());
-            if (!functions.isEmpty()) {
-                for (Map.Entry<String, ChatGPTJavaFunction> entry : functions.entrySet()) {
-                    final ChatGPTJavaFunction jsonSchemaFunction = entry.getValue();
-                    //set spring bean as target
-                    jsonSchemaFunction.setTarget(functionStub);
-                    allJsonSchemaFunctions.put(entry.getKey(), jsonSchemaFunction);
-                    allChatFunctions.put(entry.getKey(), jsonSchemaFunction.toChatFunction());
-                }
-            }
-        }
-        log.info("ChatGPTService initialized with {} functions", allJsonSchemaFunctions.size());
+        this.registry = registry;
     }
 
     public void setModel(String model) {
@@ -60,9 +41,12 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         request.setStream(null);
         boolean functionsIncluded = request.getFunctions() != null;
         if (!functionsIncluded) {
-            return openAIChatAPI.chat(request);
-        } else {
-            return openAIChatAPI.chat(request).doOnNext(response -> {
+            return this.openAIChatAPI//
+                    .chat(request);
+        }//
+        else {
+            return this.openAIChatAPI.chat(request)//
+                    .doOnNext(response -> {
                 for (ChatMessage chatMessage : response.getReply()) {
                     injectFunctionCallLambda(chatMessage);
                 }
@@ -83,8 +67,7 @@ public class ChatGPTServiceImpl implements ChatGPTService {
             });
         } else {
             return openAIChatAPI.stream(request)
-                    .onErrorContinue((e, obj) -> {
-                    })
+                    .onErrorContinue((e, obj) -> { })
                     .doOnNext(response -> {
                         for (ChatMessage chatMessage : response.getReply()) {
                             injectFunctionCallLambda(chatMessage);
@@ -140,7 +123,7 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         final List<String> functionNames = request.getFunctionNames();
         if (functionNames != null && !functionNames.isEmpty()) {
             for (String functionName : functionNames) {
-                ChatFunction chatFunction = allChatFunctions.get(functionName);
+                ChatFunction chatFunction = this.registry.getChatFunction(functionName);
                 if (chatFunction != null) {
                     request.addFunction(chatFunction);
                 }
@@ -153,10 +136,9 @@ public class ChatGPTServiceImpl implements ChatGPTService {
         final FunctionCall functionCall = chatMessage.getFunctionCall();
         if (functionCall != null) {
             final String functionName = functionCall.getName();
-            ChatGPTJavaFunction jsonSchemaFunction = allJsonSchemaFunctions.get(functionName);
+            ChatGPTJavaFunction jsonSchemaFunction = registry.getJsonSchemaFunction(functionName);
             if (jsonSchemaFunction != null) {
-                functionCall.setFunctionStub(() -> jsonSchemaFunction.call(functionCall.getArguments())
-                );
+                functionCall.setFunctionStub(() -> jsonSchemaFunction.call(functionCall.getArguments()) );
             }
         }
     }
