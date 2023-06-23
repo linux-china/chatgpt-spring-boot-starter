@@ -26,8 +26,8 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
         final ChatCompletionRequest request = ChatRequestBuilder.of(prompt("sql-developer"), prompt)
                 .function("execute_sql_query")
                 .build();
-        final ChatCompletionResponse response = chatGPTService.chat(request).block();
-        System.out.println(response.getReplyCombinedText());
+        String result = chatGPTService.chat(request).flatMap(ChatCompletionResponse::getReplyCombinedText).block();
+        System.out.println(result);
     }
 
 
@@ -39,7 +39,7 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
                 .build();
         final ChatCompletionResponse response = chatGPTService.chat(request).block();
         // display reply combined text with function call
-        System.out.println(response.getReplyCombinedText());
+        System.out.println(response.getReplyCombinedText().block());
         // call function manually
         /*for (ChatMessage chatMessage : response.getReply()) {
             final FunctionCall functionCall = chatMessage.getFunctionCall();
