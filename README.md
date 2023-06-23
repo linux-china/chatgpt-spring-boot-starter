@@ -208,8 +208,12 @@ You can declare prompt as function and chain them together.
 ```
     @Test
     public void testPromptAsFunction() {
-        final Function<String[], Mono<String>> translateFunction = chatGPTService.promptAsFunction("translate");
-        final String result = translateFunction.apply(new String[]{"Chinese", "English", "你好！"}).block();
+        Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService.promptAsFunction("translate-into-chinese");
+        Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsFunction("send-email");
+        String result = Mono.just("Hi Jackie, could you write an email to Libing(libing.chen@exaple.com) and Sam(linux_china@example.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!")
+                .flatMap(translateIntoChineseFunction)
+                .flatMap(sendEmailFunction)
+                .block();
         System.out.println(result);
     }
 ```
