@@ -8,6 +8,9 @@ import org.mvnsearch.chatgpt.model.ChatRequestBuilder;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.mvnsearch.chatgpt.spring.service.PromptManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
+
+import java.util.function.Function;
 
 public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     @Autowired
@@ -52,4 +55,10 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
         }*/
     }
 
+    @Test
+    public void testPromptLambda() {
+        final Function<String[], Mono<String>> translateFunction = chatGPTService.promptLambda("translate");
+        final String result = translateFunction.apply(new String[]{"Chinese", "English", "你好！"}).block();
+        System.out.println(result);
+    }
 }
