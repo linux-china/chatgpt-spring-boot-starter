@@ -24,7 +24,7 @@ Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
 <dependency>
     <groupId>org.mvnsearch</groupId>
     <artifactId>chatgpt-spring-boot-starter</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -185,6 +185,33 @@ If you want to have a simple test for ChatGPT functions, you can install [ChatGP
 JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown), and take a look
 at [chat.gpt file](./chat.gpt).
 
+# Prompt Templates
+
+How to manage prompts in Java? Now ChatGPT starter adopts `prompts.properties` to save prompt templates,
+and uses MessageFormat to format template value.`PromptPropertiesStoreImpl` will load all ` prompts.properties` files
+from classpath. You can extend `PromptStore` to load prompts from database or other sources.
+
+You can load prompt template by [PromptManager](src/main/java/org/mvnsearch/chatgpt/spring/service/PromptManager.java).
+
+Tips:
+
+* Prompt template code completion: support by `@PropertyKey(resourceBundle = PROMPTS_FQN)`
+* `@ChatCompletion` annotation has built-in prompt template support for `user`,`system` and `assistant` messages.
+
+### Prompt Template as lambda/function
+
+For some case you want to use prompt template as lambda, such as translate first, then send it as email.
+You can declare prompt as function and chain them together.
+
+```
+    @Test
+    public void testPromptAsFunction() {
+        final Function<String[], Mono<String>> translateFunction = chatGPTService.promptAsFunction("translate");
+        final String result = translateFunction.apply(new String[]{"Chinese", "English", "你好！"}).block();
+        System.out.println(result);
+    }
+```
+
 # FAQ
 
 ### OpenAI REST API proxy
@@ -206,11 +233,6 @@ public class OpenAIProxyController {
 ```
 
 Of course, you can use standard URL `http://localhost:8080/v1/chat/completions` to call Azure OpenAI API.
-
-### Prompt templates
-
-How to manage prompts in Java? Now my suggestion is to adopt properties file format, and use MessageFormat to format.
-Please take a look at [PromptManager](src/test/java/org/mvnsearch/chatgpt/demo/service/PromptManager.java)
 
 # References
 
