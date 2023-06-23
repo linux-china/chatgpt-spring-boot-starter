@@ -103,7 +103,7 @@ public class ChatGPTAutoConfiguration {
     }
 
     @Bean
-    public ChatGPTServiceProxyFactory chatGPTServiceProxyFactory(ChatGPTService chatGPTService) {
-        return new ChatGPTServiceProxyFactory(chatGPTService);
+    public ChatGPTServiceProxyFactory chatGPTServiceProxyFactory(ChatGPTService chatGPTService, PromptManager promptManager) {
+        return new ChatGPTServiceProxyFactory(chatGPTService, promptManager);
     }
 }
