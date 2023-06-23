@@ -11,7 +11,7 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatCompletionRequest {
-    private String model = "gpt-3.5-turbo";
+    private String model;
     private List<ChatMessage> messages;
     private Double temperature;
     private Integer n;
@@ -171,7 +171,6 @@ public class ChatCompletionRequest {
     public void addFunction(String functionName) {
         if (this.functionNames == null) {
             this.functionNames = new ArrayList<>();
-            updateModelWithFunctionSupport();
         }
         this.functionNames.add(functionName);
     }
@@ -179,15 +178,16 @@ public class ChatCompletionRequest {
     public void addFunction(ChatFunction function) {
         if (this.functions == null) {
             this.functions = new ArrayList<>();
-            updateModelWithFunctionSupport();
         }
         this.functions.add(function);
     }
 
-    private void updateModelWithFunctionSupport() {
+    public void updateModelWithFunctionSupport() {
         // Snapshot of gpt-3.5-turbo from June 13th 2023 with function support
-        if (!this.model.endsWith("-0613")) {
-            this.model = this.model + "-0613";
+        if (this.functionNames != null || this.functions != null) {
+            if (!this.model.endsWith("-0613")) {
+                this.model = this.model + "-0613";
+            }
         }
     }
 
@@ -197,7 +197,6 @@ public class ChatCompletionRequest {
 
     public static ChatCompletionRequest functions(@Nonnull String userMessage, List<String> functionNames) {
         final ChatCompletionRequest request = new ChatCompletionRequest();
-        request.setModel("gpt-3.5-turbo-0613");
         request.setFunctionNames(functionNames);
         request.addMessage(ChatMessage.userMessage(userMessage));
         return request;
