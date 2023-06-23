@@ -256,6 +256,12 @@ public class OpenAIProxyController {
 
 Of course, you can use standard URL `http://localhost:8080/v1/chat/completions` to call Azure OpenAI API.
 
+### How to use ChatGPT with Spring Web?
+
+Now ChatGPT starter use Reactive style API, and you know Reactive still hard to understand.
+Could ChatGPT starter work with Spring Web? Yes, you can use `Mono` or `Flux` with Spring Web and Virtual Threads,
+please refer [Spring Boot Virtual Thread Demo](https://github.com/linux-china/spring-boot-virtual-thread-demo#async-method-on-virtual-threads) for details.
+
 # References
 
 * [OpenAI chat API](https://platform.openai.com/docs/api-reference/chat)
