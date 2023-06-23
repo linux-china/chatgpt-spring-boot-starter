@@ -1,9 +1,13 @@
 package org.mvnsearch.chatgpt.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 public class ChatCompletionResponse {
@@ -86,34 +90,33 @@ public class ChatCompletionResponse {
         return sb.toString();
     }
 
-    /**
-     * get reply combined text with function call result embedded
-     *
-     * @return reply text
-     */
     @JsonIgnore
-    public String getReplyCombinedText() {
-        if (this.choices == null || this.choices.isEmpty()) return "";
-        StringBuilder sb = new StringBuilder();
-        for (ChatCompletionChoice choice : choices) {
-            final ChatMessage message = choice.getMessage();
-            if (message != null) {
-                if (message.getContent() != null) {
-                    sb.append(message.getContent());
-                }
-                final FunctionCall functionCall = message.getFunctionCall();
-                if (functionCall != null && functionCall.getFunctionStub() != null) {
-                    try {
-                        final Object result = functionCall.getFunctionStub().call();
-                        if (result != null) {
-                            sb.append(result);
+    public Mono<String> getReplyCombinedText() {
+        if (this.choices == null || this.choices.isEmpty()) return Mono.empty();
+        return Flux.fromIterable(choices).flatMap(choice -> {
+                    final ChatMessage message = choice.getMessage();
+                    if (message != null) {
+                        if (message.getContent() != null) {
+                            return Mono.just(message.getContent());
                         }
-                    } catch (Exception e) {
-                        sb.append("FunctionError: ").append(e.getMessage());
+                        final FunctionCall functionCall = message.getFunctionCall();
+                        if (functionCall != null && functionCall.getFunctionStub() != null) {
+                            try {
+                                final Object result = functionCall.getFunctionStub().call();
+                                if (result != null) {
+                                    if (result instanceof Mono) {
+                                        return (Mono<?>) result;
+                                    } else {
+                                        return Mono.justOrEmpty(result);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                return Mono.error(e);
+                            }
+                        }
                     }
-                }
-            }
-        }
-        return sb.toString();
+                    return Mono.empty();
+                }).collectList()
+                .map(items -> items.stream().filter(Objects::nonNull).map(String::valueOf).collect(Collectors.joining()));
     }
 }
