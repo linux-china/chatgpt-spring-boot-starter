@@ -13,10 +13,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface GPTExchange {
-    String value() default "gpt-3.5-turbo";
+    String value() default "";
 
     @AliasFor("value")
-    String model() default "gpt-3.5-turbo";
+    String model() default "";
 
     double temperature() default -1;
 
