@@ -57,8 +57,12 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 
     @Test
     public void testPromptAsFunction() {
-        final Function<String[], Mono<String>> translateFunction = chatGPTService.promptAsFunction("translate");
-        final String result = translateFunction.apply(new String[]{"Chinese", "English", "你好！"}).block();
+        final Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService.promptAsFunction("translate-into-chinese");
+        final Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsFunction("send-email");
+        final String result = Mono.just("Hi Jackie, could you write an email to Libing(libing.chen@gmail.com) and Sam(linux_china@hotmail.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!")
+                .flatMap(translateIntoChineseFunction)
+                .flatMap(sendEmailFunction)
+                .block();
         System.out.println(result);
     }
 }
