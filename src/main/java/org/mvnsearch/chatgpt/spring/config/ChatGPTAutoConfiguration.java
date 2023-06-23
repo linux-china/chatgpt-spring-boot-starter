@@ -1,19 +1,12 @@
 package org.mvnsearch.chatgpt.spring.config;
 
-import org.mvnsearch.chatgpt.model.*;
-import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
-import org.mvnsearch.chatgpt.model.function.GPTFunction;
-import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
-import org.mvnsearch.chatgpt.model.function.Parameter;
 import org.mvnsearch.chatgpt.spring.exchange.ChatGPTServiceProxyFactory;
 import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.mvnsearch.chatgpt.spring.service.PromptManager;
 import org.mvnsearch.chatgpt.spring.service.PromptStore;
-import org.mvnsearch.chatgpt.spring.service.impl.ChatGPTServiceImpl;
 import org.mvnsearch.chatgpt.spring.service.impl.PromptManagerImpl;
 import org.mvnsearch.chatgpt.spring.service.impl.PromptPropertiesStoreImpl;
-import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -25,26 +18,9 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-@RegisterReflectionForBinding({
-        Parameter.class,
-        GPTFunction.class,
-        ChatCompletionRequest.class,
-        ChatCompletionResponse.class,
-        ChatCompletionChoice.class,
-        ChatCompletionUsage.class,
-        ChatMessage.class,
-        FunctionCall.class,
-        ChatFunction.class,
-        ChatFunction.Parameters.class,
-        ChatFunction.JsonSchemaProperty.class,
-        ChatFunction.JsonArrayItems.class,
-        GPTFunctionsStub.class,
-        ChatGPTJavaFunction.class,
-})
+
 @AutoConfiguration
 public class ChatGPTAutoConfiguration {
 
@@ -96,11 +72,6 @@ public class ChatGPTAutoConfiguration {
         return new PromptManagerImpl(promptsStores);
     }
 
-    @Bean
-    public ChatGPTService chatGPTService(OpenAIChatAPI openAIChatAPI, PromptManager promptManager,
-                                         Optional<List<GPTFunctionsStub>> stubs) throws Exception {
-        return new ChatGPTServiceImpl(openAIChatAPI, promptManager, stubs.orElse(Collections.emptyList()));
-    }
 
     @Bean
     public ChatGPTServiceProxyFactory chatGPTServiceProxyFactory(ChatGPTService chatGPTService, PromptManager promptManager) {

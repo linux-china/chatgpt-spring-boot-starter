@@ -1,1 +1,2 @@
 org.mvnsearch.chatgpt.spring.config.ChatGPTAutoConfiguration
+org.mvnsearch.chatgpt.spring.service.impl.ServiceAutoConfiguration
