@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
 import org.mvnsearch.chatgpt.demo.service.GPTHelloService;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
 
 
 public class GPTHelloServiceTest extends ProjectBootBaseTest {
@@ -17,6 +18,12 @@ public class GPTHelloServiceTest extends ProjectBootBaseTest {
 
     @Test
     public void testTranslate() throws Exception {
-        System.out.println(helloService.translate("Chinese", "English", "你好！").block());
+        final Mono<String> translate = helloService.translate("Chinese", "English", "你好！");
+        System.out.println(translate.block());
+    }
+
+    @Test
+    public void testTranslateFromTemplate() throws Exception {
+        System.out.println(helloService.translateFromTemplate("Chinese", "English", "你好！").block());
     }
 }
