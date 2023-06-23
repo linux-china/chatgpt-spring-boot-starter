@@ -14,7 +14,7 @@ public class PromptManagerImplTest extends ProjectBootBaseTest {
 
     @Test
     public void testLoadPrompt() {
-        assertThat(promptManager.prompt("sql-developer")).contains("SQL");
+        assertThat(promptManager.prompt("sql-developer", "Query all employees.")).contains("SQL");
         assertThat(promptManager.prompt("translate", "Chinese", "English", "你好！")).contains("Chinese");
     }
 }
