@@ -1,8 +1,10 @@
 package org.mvnsearch.chatgpt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nonnull;
+import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import reactor.core.publisher.Mono;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -64,7 +66,8 @@ public class ChatMessage {
         this.functionCall = functionCall;
     }
 
-    Mono<?> getReplyCombinedText() {
+    @JsonIgnore
+    public Mono<String> getReplyCombinedText() {
         if (content != null) {
             return Mono.just(content);
         }
@@ -73,9 +76,28 @@ public class ChatMessage {
                 final Object result = functionCall.getFunctionStub().call();
                 if (result != null) {
                     if (result instanceof Mono) {
-                        return (Mono<?>) result;
+                        return ((Mono<?>) result).map(GPTFunctionUtils::toTextPlain);
                     } else {
-                        return Mono.justOrEmpty(result);
+                        return Mono.just(result).map(GPTFunctionUtils::toTextPlain);
+                    }
+                }
+            } catch (Exception e) {
+                return Mono.error(e);
+            }
+        }
+        return Mono.empty();
+    }
+
+    @JsonIgnore
+    public <T> Mono<T> getFunctionResult() {
+        if (functionCall != null && functionCall.getFunctionStub() != null) {
+            try {
+                final Object result = functionCall.getFunctionStub().call();
+                if (result != null) {
+                    if (result instanceof Mono) {
+                        return (Mono<T>) result;
+                    } else {
+                        return (Mono<T>) Mono.just(result);
                     }
                 }
             } catch (Exception e) {
