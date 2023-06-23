@@ -5,10 +5,14 @@ import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
 import org.mvnsearch.chatgpt.model.function.Parameter;
+import org.mvnsearch.chatgpt.spring.exchange.ChatGPTServiceProxyFactory;
 import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
-import org.mvnsearch.chatgpt.spring.service.ChatGPTServiceImpl;
-import org.mvnsearch.chatgpt.spring.exchange.ChatGPTServiceProxyFactory;
+import org.mvnsearch.chatgpt.spring.service.PromptManager;
+import org.mvnsearch.chatgpt.spring.service.PromptStore;
+import org.mvnsearch.chatgpt.spring.service.impl.ChatGPTServiceImpl;
+import org.mvnsearch.chatgpt.spring.service.impl.PromptManagerImpl;
+import org.mvnsearch.chatgpt.spring.service.impl.PromptsStoreImpl;
 import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -80,6 +84,16 @@ public class ChatGPTAutoConfiguration {
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder().clientAdapter(WebClientAdapter.forClient(webClient)).build();
         return httpServiceProxyFactory.createClient(OpenAIChatAPI.class);
 
+    }
+
+    @Bean
+    public PromptStore promptsPropertiesStore() {
+        return new PromptsStoreImpl();
+    }
+
+    @Bean
+    public PromptManager promptManager(List<PromptStore> promptsStores) throws Exception {
+        return new PromptManagerImpl(promptsStores);
     }
 
     @Bean
