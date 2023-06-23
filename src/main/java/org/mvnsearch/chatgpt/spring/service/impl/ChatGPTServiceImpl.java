@@ -94,7 +94,7 @@ public class ChatGPTServiceImpl implements ChatGPTService {
     }
 
     @Override
-    public <T> Function<T, Mono<String>> promptLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey) {
+    public <T> Function<T, Mono<String>> promptAsFunction(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey) {
         return obj -> {
             String prompt;
             if (obj != null) {

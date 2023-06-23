@@ -56,8 +56,8 @@ public class ChatGPTServiceImplTest extends ProjectBootBaseTest {
     }
 
     @Test
-    public void testPromptLambda() {
-        final Function<String[], Mono<String>> translateFunction = chatGPTService.promptLambda("translate");
+    public void testPromptAsFunction() {
+        final Function<String[], Mono<String>> translateFunction = chatGPTService.promptAsFunction("translate");
         final String result = translateFunction.apply(new String[]{"Chinese", "English", "你好！"}).block();
         System.out.println(result);
     }

@@ -15,5 +15,5 @@ public interface ChatGPTService {
 
     Flux<ChatCompletionResponse> stream(ChatCompletionRequest request);
 
-   <T> Function<T, Mono<String>> promptLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey);
+   <T> Function<T, Mono<String>> promptAsFunction(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey);
 }
