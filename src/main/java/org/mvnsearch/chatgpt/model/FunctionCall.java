@@ -5,32 +5,36 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.concurrent.Callable;
 
 public class FunctionCall {
-    private String name;
-    private String arguments;
-    @JsonIgnore
-    private Callable<Object> functionStub;
 
-    public String getName() {
-        return name;
-    }
+	private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	private String arguments;
 
-    public String getArguments() {
-        return arguments;
-    }
+	@JsonIgnore
+	private Callable<Object> functionStub;
 
-    public void setArguments(String arguments) {
-        this.arguments = arguments;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Callable<Object> getFunctionStub() {
-        return functionStub;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setFunctionStub(Callable<Object> functionStub) {
-        this.functionStub = functionStub;
-    }
+	public String getArguments() {
+		return arguments;
+	}
+
+	public void setArguments(String arguments) {
+		this.arguments = arguments;
+	}
+
+	public Callable<Object> getFunctionStub() {
+		return functionStub;
+	}
+
+	public void setFunctionStub(Callable<Object> functionStub) {
+		this.functionStub = functionStub;
+	}
+
 }

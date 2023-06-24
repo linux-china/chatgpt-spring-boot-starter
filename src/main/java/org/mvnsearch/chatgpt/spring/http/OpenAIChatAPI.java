@@ -11,19 +11,19 @@ import reactor.core.publisher.Mono;
 
 @HttpExchange
 public interface OpenAIChatAPI {
-    @PostExchange("/chat/completions")
-    Mono<ChatCompletionResponse> chat(@RequestBody ChatCompletionRequest request);
 
-    @PostExchange("/chat/completions")
-    Flux<ChatCompletionResponse> stream(@RequestBody ChatCompletionRequest request);
+	@PostExchange("/chat/completions")
+	Mono<ChatCompletionResponse> chat(@RequestBody ChatCompletionRequest request);
 
-    /**
-     * proxy to upstream
-     *
-     * @param request chat completion request
-     * @return response
-     */
-    @PostExchange("/chat/completions")
-    Publisher<ChatCompletionResponse> proxy(@RequestBody ChatCompletionRequest request);
+	@PostExchange("/chat/completions")
+	Flux<ChatCompletionResponse> stream(@RequestBody ChatCompletionRequest request);
+
+	/**
+	 * proxy to upstream
+	 * @param request chat completion request
+	 * @return response
+	 */
+	@PostExchange("/chat/completions")
+	Publisher<ChatCompletionResponse> proxy(@RequestBody ChatCompletionRequest request);
 
 }

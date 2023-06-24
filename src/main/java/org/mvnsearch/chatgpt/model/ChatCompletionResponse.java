@@ -9,110 +9,118 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 public class ChatCompletionResponse {
-    private String id;
-    private String model;
-    private Long created;
-    private String object;
-    private ChatCompletionUsage usage;
-    private List<ChatCompletionChoice> choices;
 
-    public String getId() {
-        return id;
-    }
+	private String id;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	private String model;
 
-    public ChatCompletionUsage getUsage() {
-        return usage;
-    }
+	private Long created;
 
-    public void setUsage(ChatCompletionUsage usage) {
-        this.usage = usage;
-    }
+	private String object;
 
-    public List<ChatCompletionChoice> getChoices() {
-        return choices;
-    }
+	private ChatCompletionUsage usage;
 
-    public void setChoices(List<ChatCompletionChoice> choices) {
-        this.choices = choices;
-    }
+	private List<ChatCompletionChoice> choices;
 
-    public String getModel() {
-        return model;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public Long getCreated() {
-        return created;
-    }
+	public ChatCompletionUsage getUsage() {
+		return usage;
+	}
 
-    public void setCreated(Long created) {
-        this.created = created;
-    }
+	public void setUsage(ChatCompletionUsage usage) {
+		this.usage = usage;
+	}
 
-    public String getObject() {
-        return object;
-    }
+	public List<ChatCompletionChoice> getChoices() {
+		return choices;
+	}
 
-    public void setObject(String object) {
-        this.object = object;
-    }
+	public void setChoices(List<ChatCompletionChoice> choices) {
+		this.choices = choices;
+	}
 
-    public boolean isEmpty() {
-        return choices == null || choices.isEmpty();
-    }
+	public String getModel() {
+		return model;
+	}
 
-    @JsonIgnore
-    public List<ChatMessage> getReply() {
-        if (isEmpty()) return Collections.emptyList();
-        return this.choices.stream().map(ChatCompletionChoice::getMessage).toList();
-    }
+	public void setModel(String model) {
+		this.model = model;
+	}
 
-    /**
-     * get reply text from messages' content
-     *
-     * @return reply text
-     */
-    @JsonIgnore
-    public String getReplyText() {
-        if (isEmpty()) return "";
-        StringBuilder sb = new StringBuilder();
-        for (ChatCompletionChoice choice : choices) {
-            final ChatMessage message = choice.getMessage();
-            if (message != null && message.getContent() != null) {
-                sb.append(message.getContent());
-            }
-        }
-        return sb.toString();
-    }
+	public Long getCreated() {
+		return created;
+	}
 
-    @JsonIgnore
-    public Mono<String> getReplyCombinedText() {
-        if (isEmpty()) return Mono.empty();
-        return Flux.fromIterable(choices).flatMap(choice -> {
-                    final ChatMessage message = choice.getMessage();
-                    if (message != null) {
-                        return message.getReplyCombinedText();
-                    }
-                    return Mono.empty();
-                }).collectList()
-                .map(items -> items.stream().filter(Objects::nonNull).collect(Collectors.joining()));
-    }
+	public void setCreated(Long created) {
+		this.created = created;
+	}
 
-    @JsonIgnore
-    public <T> Mono<T> getFunctionResult() {
-        if (isEmpty()) return Mono.empty();
-        return Flux.fromIterable(choices)
-                .filter(choice -> choice.getMessage() != null && choice.getMessage().getFunctionCall() != null)
-                .last()
-                .flatMap(choice -> choice.getMessage().getFunctionResult());
-    }
+	public String getObject() {
+		return object;
+	}
+
+	public void setObject(String object) {
+		this.object = object;
+	}
+
+	public boolean isEmpty() {
+		return choices == null || choices.isEmpty();
+	}
+
+	@JsonIgnore
+	public List<ChatMessage> getReply() {
+		if (isEmpty())
+			return Collections.emptyList();
+		return this.choices.stream().map(ChatCompletionChoice::getMessage).toList();
+	}
+
+	/**
+	 * get reply text from messages' content
+	 * @return reply text
+	 */
+	@JsonIgnore
+	public String getReplyText() {
+		if (isEmpty())
+			return "";
+		StringBuilder sb = new StringBuilder();
+		for (ChatCompletionChoice choice : choices) {
+			final ChatMessage message = choice.getMessage();
+			if (message != null && message.getContent() != null) {
+				sb.append(message.getContent());
+			}
+		}
+		return sb.toString();
+	}
+
+	@JsonIgnore
+	public Mono<String> getReplyCombinedText() {
+		if (isEmpty())
+			return Mono.empty();
+		return Flux.fromIterable(choices).flatMap(choice -> {
+			final ChatMessage message = choice.getMessage();
+			if (message != null) {
+				return message.getReplyCombinedText();
+			}
+			return Mono.empty();
+		}).collectList().map(items -> items.stream().filter(Objects::nonNull).collect(Collectors.joining()));
+	}
+
+	@JsonIgnore
+	public <T> Mono<T> getFunctionResult() {
+		if (isEmpty())
+			return Mono.empty();
+		return Flux.fromIterable(choices)
+			.filter(choice -> choice.getMessage() != null && choice.getMessage().getFunctionCall() != null)
+			.last()
+			.flatMap(choice -> choice.getMessage().getFunctionResult());
+	}
+
 }

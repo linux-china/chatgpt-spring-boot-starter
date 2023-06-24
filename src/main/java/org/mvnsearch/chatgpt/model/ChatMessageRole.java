@@ -1,19 +1,21 @@
 package org.mvnsearch.chatgpt.model;
 
 public enum ChatMessageRole {
-    system("system"),
 
-    user("user"),
+	system("system"),
 
-    assistant("assistant");
+	user("user"),
 
-    private final String name;
+	assistant("assistant");
 
-    ChatMessageRole(final String name) {
-        this.name = name;
-    }
+	private final String name;
 
-    public String value() {
-        return name;
-    }
+	ChatMessageRole(final String name) {
+		this.name = name;
+	}
+
+	public String value() {
+		return name;
+	}
+
 }

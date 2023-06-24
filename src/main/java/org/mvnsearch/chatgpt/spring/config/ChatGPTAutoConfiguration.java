@@ -20,61 +20,64 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
-
 @AutoConfiguration
 public class ChatGPTAutoConfiguration {
 
-    @Bean
-    public OpenAIChatAPI openAIChatAPI(@Value("${openai.api.key}") String openaiApiKey,
-                                       @Value("${openai.api.url:https://api.openai.com/v1}") final String openaiApiUrl) throws Exception {
-        URL url = new URL(openaiApiUrl);
-        String baseUrl = openaiApiUrl;
-        if (openaiApiUrl.contains("/chat/")) {
-            baseUrl = openaiApiUrl.substring(0, openaiApiUrl.lastIndexOf("/chat/"));
-        }
-        WebClient webClient;
-        if (url.getHost().contains("openai.azure.com")) {
-            String apiVersion = openaiApiUrl.substring(openaiApiUrl.lastIndexOf("api-version=") + 12);
-            if (apiVersion.contains("&")) {
-                apiVersion = apiVersion.substring(0, apiVersion.indexOf("&"));
-            }
-            final String apiVersionValue = apiVersion;
-            // append api-version parameter for url
-            ExchangeFilterFunction appendVersionParamFilter = (clientRequest, nextFilter) -> {
-                String oldUrl = clientRequest.url().toString();
-                URI newUrl = URI.create(oldUrl + "?api-version=" + apiVersionValue);
-                ClientRequest filteredRequest = ClientRequest.from(clientRequest).url(newUrl).build();
-                return nextFilter.exchange(filteredRequest);
-            };
-            webClient = WebClient.builder()
-                    .defaultHeader("api-key", openaiApiKey)
-                    .baseUrl(baseUrl)
-                    .filter(appendVersionParamFilter)
-                    .build();
-        } else {
-            webClient = WebClient.builder()
-                    .defaultHeader("Authorization", "Bearer " + openaiApiKey)
-                    .baseUrl(baseUrl)
-                    .build();
-        }
-        HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder().clientAdapter(WebClientAdapter.forClient(webClient)).build();
-        return httpServiceProxyFactory.createClient(OpenAIChatAPI.class);
+	@Bean
+	public OpenAIChatAPI openAIChatAPI(@Value("${openai.api.key}") String openaiApiKey,
+			@Value("${openai.api.url:https://api.openai.com/v1}") final String openaiApiUrl) throws Exception {
+		URL url = new URL(openaiApiUrl);
+		String baseUrl = openaiApiUrl;
+		if (openaiApiUrl.contains("/chat/")) {
+			baseUrl = openaiApiUrl.substring(0, openaiApiUrl.lastIndexOf("/chat/"));
+		}
+		WebClient webClient;
+		if (url.getHost().contains("openai.azure.com")) {
+			String apiVersion = openaiApiUrl.substring(openaiApiUrl.lastIndexOf("api-version=") + 12);
+			if (apiVersion.contains("&")) {
+				apiVersion = apiVersion.substring(0, apiVersion.indexOf("&"));
+			}
+			final String apiVersionValue = apiVersion;
+			// append api-version parameter for url
+			ExchangeFilterFunction appendVersionParamFilter = (clientRequest, nextFilter) -> {
+				String oldUrl = clientRequest.url().toString();
+				URI newUrl = URI.create(oldUrl + "?api-version=" + apiVersionValue);
+				ClientRequest filteredRequest = ClientRequest.from(clientRequest).url(newUrl).build();
+				return nextFilter.exchange(filteredRequest);
+			};
+			webClient = WebClient.builder()
+				.defaultHeader("api-key", openaiApiKey)
+				.baseUrl(baseUrl)
+				.filter(appendVersionParamFilter)
+				.build();
+		}
+		else {
+			webClient = WebClient.builder()
+				.defaultHeader("Authorization", "Bearer " + openaiApiKey)
+				.baseUrl(baseUrl)
+				.build();
+		}
+		HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builder()
+			.clientAdapter(WebClientAdapter.forClient(webClient))
+			.build();
+		return httpServiceProxyFactory.createClient(OpenAIChatAPI.class);
 
-    }
+	}
 
-    @Bean
-    public PromptStore promptsPropertiesStore() {
-        return new PromptPropertiesStoreImpl();
-    }
+	@Bean
+	public PromptStore promptsPropertiesStore() {
+		return new PromptPropertiesStoreImpl();
+	}
 
-    @Bean
-    public PromptManager promptManager(List<PromptStore> promptsStores) throws Exception {
-        return new PromptManagerImpl(promptsStores);
-    }
+	@Bean
+	public PromptManager promptManager(List<PromptStore> promptsStores) throws Exception {
+		return new PromptManagerImpl(promptsStores);
+	}
 
+	@Bean
+	public ChatGPTServiceProxyFactory chatGPTServiceProxyFactory(ChatGPTService chatGPTService,
+			PromptManager promptManager) {
+		return new ChatGPTServiceProxyFactory(chatGPTService, promptManager);
+	}
 
-    @Bean
-    public ChatGPTServiceProxyFactory chatGPTServiceProxyFactory(ChatGPTService chatGPTService, PromptManager promptManager) {
-        return new ChatGPTServiceProxyFactory(chatGPTService, promptManager);
-    }
 }

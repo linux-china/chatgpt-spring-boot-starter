@@ -11,11 +11,14 @@ import java.util.function.Function;
 import static org.mvnsearch.chatgpt.spring.service.PromptManager.PROMPTS_FQN;
 
 public interface ChatGPTService {
-    Mono<ChatCompletionResponse> chat(ChatCompletionRequest request);
 
-    Flux<ChatCompletionResponse> stream(ChatCompletionRequest request);
+	Mono<ChatCompletionResponse> chat(ChatCompletionRequest request);
 
-    <T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey);
+	Flux<ChatCompletionResponse> stream(ChatCompletionRequest request);
 
-    <T, R> Function<T, Mono<R>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey, String functionName);
+	<T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey);
+
+	<T, R> Function<T, Mono<R>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey,
+			String functionName);
+
 }

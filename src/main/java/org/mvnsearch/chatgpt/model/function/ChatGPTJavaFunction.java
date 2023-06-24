@@ -10,93 +10,100 @@ import java.util.HashMap;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatGPTJavaFunction {
-    private String name;
-    private String description;
-    private ChatFunction.Parameters parameters;
-    @JsonIgnore
-    private Method javaMethod;
-    @JsonIgnore
-    private Class<?> parameterType;
-    @JsonIgnore
-    private Object target;
 
-    public String getName() {
-        return name;
-    }
+	private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	private String description;
 
-    public String getDescription() {
-        return description;
-    }
+	private ChatFunction.Parameters parameters;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	@JsonIgnore
+	private Method javaMethod;
 
-    public ChatFunction.Parameters getParameters() {
-        return parameters;
-    }
+	@JsonIgnore
+	private Class<?> parameterType;
 
-    public void setParameters(ChatFunction.Parameters parameters) {
-        this.parameters = parameters;
-    }
+	@JsonIgnore
+	private Object target;
 
-    public Method getJavaMethod() {
-        return javaMethod;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setJavaMethod(Method javaMethod) {
-        this.javaMethod = javaMethod;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public Class<?> getParameterType() {
-        return parameterType;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setParameterType(Class<?> parameterType) {
-        this.parameterType = parameterType;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public Object getTarget() {
-        return target;
-    }
+	public ChatFunction.Parameters getParameters() {
+		return parameters;
+	}
 
-    public void setTarget(Object target) {
-        this.target = target;
-    }
+	public void setParameters(ChatFunction.Parameters parameters) {
+		this.parameters = parameters;
+	}
 
+	public Method getJavaMethod() {
+		return javaMethod;
+	}
 
-    public void addProperty(String name, String type, String description) {
-        if (this.parameters == null) {
-            this.parameters = new ChatFunction.Parameters("object", new HashMap<>(), new ArrayList<>());
-        }
-        this.parameters.getProperties().put(name, new ChatFunction.JsonSchemaProperty(name, type, description));
-    }
+	public void setJavaMethod(Method javaMethod) {
+		this.javaMethod = javaMethod;
+	}
 
-    public void addArrayProperty(String name, String type, String description) {
-        if (this.parameters == null) {
-            this.parameters = new ChatFunction.Parameters("object", new HashMap<>(), new ArrayList<>());
-        }
-        this.parameters.getProperties().put(name, new ChatFunction.JsonSchemaProperty(name, "array", description, new ChatFunction.JsonArrayItems(type, null)));
-    }
+	public Class<?> getParameterType() {
+		return parameterType;
+	}
 
-    public void addRequired(String name) {
-        this.getParameters().getRequired().add(name);
-    }
+	public void setParameterType(Class<?> parameterType) {
+		this.parameterType = parameterType;
+	}
 
-    public ChatFunction toChatFunction() {
-        ChatFunction chatFunction = new ChatFunction();
-        chatFunction.setName(this.name);
-        chatFunction.setDescription(this.description);
-        chatFunction.setParameters(this.parameters);
-        return chatFunction;
-    }
+	public Object getTarget() {
+		return target;
+	}
 
-    public Object call(String argumentsJson) throws Exception {
-        return GPTFunctionUtils.callGPTFunction(target, this, argumentsJson);
-    }
+	public void setTarget(Object target) {
+		this.target = target;
+	}
+
+	public void addProperty(String name, String type, String description) {
+		if (this.parameters == null) {
+			this.parameters = new ChatFunction.Parameters("object", new HashMap<>(), new ArrayList<>());
+		}
+		this.parameters.getProperties().put(name, new ChatFunction.JsonSchemaProperty(name, type, description));
+	}
+
+	public void addArrayProperty(String name, String type, String description) {
+		if (this.parameters == null) {
+			this.parameters = new ChatFunction.Parameters("object", new HashMap<>(), new ArrayList<>());
+		}
+		this.parameters.getProperties()
+			.put(name, new ChatFunction.JsonSchemaProperty(name, "array", description,
+					new ChatFunction.JsonArrayItems(type, null)));
+	}
+
+	public void addRequired(String name) {
+		this.getParameters().getRequired().add(name);
+	}
+
+	public ChatFunction toChatFunction() {
+		ChatFunction chatFunction = new ChatFunction();
+		chatFunction.setName(this.name);
+		chatFunction.setDescription(this.description);
+		chatFunction.setParameters(this.parameters);
+		return chatFunction;
+	}
+
+	public Object call(String argumentsJson) throws Exception {
+		return GPTFunctionUtils.callGPTFunction(target, this, argumentsJson);
+	}
 
 }

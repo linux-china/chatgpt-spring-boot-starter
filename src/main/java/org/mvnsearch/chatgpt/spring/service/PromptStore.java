@@ -10,5 +10,6 @@ import java.util.Map;
  */
 public interface PromptStore {
 
-    Map<String, String> readAll() throws IOException;
+	Map<String, String> readAll() throws IOException;
+
 }

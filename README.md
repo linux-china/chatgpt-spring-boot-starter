@@ -3,6 +3,7 @@ ChatGPT Spring Boot Starter
 
 Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 
+
 # Features
 
 * Base on Spring Boot 3.0+
@@ -262,6 +263,17 @@ Of course, you can use standard URL `http://localhost:8080/v1/chat/completions` 
 Now ChatGPT starter use Reactive style API, and you know Reactive still hard to understand.
 Could ChatGPT starter work with Spring Web? Yes, you can use `Mono` or `Flux` with Spring Web and Virtual Threads,
 please refer [Spring Boot Virtual Thread Demo](https://github.com/linux-china/spring-boot-virtual-thread-demo#async-method-on-virtual-threads) for details.
+
+
+# Building the Code 
+
+The code uses the Spring Java Formatter Maven plugin, which keeps the code consistent. In order to build the code, run:
+
+```shell 
+./mvnw spring-javaformat:apply
+```
+
+This will ensure that all contributions have the exact same code formatting, allowing us to focus on bigger issues, like functionality,
 
 # References
 

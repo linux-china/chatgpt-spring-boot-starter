@@ -17,129 +17,141 @@ import static org.mvnsearch.chatgpt.spring.service.PromptManager.PROMPTS_FQN;
 
 class ChatGPTServiceImpl implements ChatGPTService {
 
-    private final OpenAIChatAPI openAIChatAPI;
-    private final PromptManager promptManager;
-    private final GPTFunctionRegistry registry;
-    private String model = "gpt-3.5-turbo";
+	private final OpenAIChatAPI openAIChatAPI;
 
-      ChatGPTServiceImpl(OpenAIChatAPI openAIChatAPI, PromptManager promptManager, GPTFunctionRegistry registry) throws Exception {
-        this.openAIChatAPI = openAIChatAPI;
-        this.promptManager = promptManager;
-        this.registry = registry;
-    }
+	private final PromptManager promptManager;
 
-    public void setModel(String model) {
-        this.model = model;
-    }
+	private final GPTFunctionRegistry registry;
 
-    @Override
-    public Mono<ChatCompletionResponse> chat(ChatCompletionRequest request) {
-        if (request.getModel() == null) {
-            request.setModel(model);
-        }
-        injectFunctions(request);
-        request.setStream(null);
-        boolean functionsIncluded = request.getFunctions() != null;
-        if (!functionsIncluded) {
-            return this.openAIChatAPI//
-                    .chat(request);
-        }//
-        else {
-            return this.openAIChatAPI.chat(request)//
-                    .doOnNext(response -> {
-                for (ChatMessage chatMessage : response.getReply()) {
-                    injectFunctionCallLambda(chatMessage);
-                }
-            });
-        }
-    }
+	private String model = "gpt-3.5-turbo";
 
-    @Override
-    public Flux<ChatCompletionResponse> stream(ChatCompletionRequest request) {
-        if (request.getModel() == null) {
-            request.setModel(model);
-        }
-        request.setStream(true);
-        injectFunctions(request);
-        boolean functionsIncluded = request.getFunctions() != null;
-        if (!functionsIncluded) {
-            return openAIChatAPI.stream(request).onErrorContinue((e, obj) -> {
-            });
-        } else {
-            return openAIChatAPI.stream(request)
-                    .onErrorContinue((e, obj) -> { })
-                    .doOnNext(response -> {
-                        for (ChatMessage chatMessage : response.getReply()) {
-                            injectFunctionCallLambda(chatMessage);
-                        }
-                    });
-        }
-    }
+	ChatGPTServiceImpl(OpenAIChatAPI openAIChatAPI, PromptManager promptManager, GPTFunctionRegistry registry)
+			throws Exception {
+		this.openAIChatAPI = openAIChatAPI;
+		this.promptManager = promptManager;
+		this.registry = registry;
+	}
 
-    @Override
-    public <T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey) {
-        return promptAsLambda(promptKey, null);
-    }
+	public void setModel(String model) {
+		this.model = model;
+	}
 
-    @Override
-    public <T, R> Function<T, Mono<R>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey, String functionName) {
-        return obj -> {
-            String prompt;
-            if (obj != null) {
-                if (obj.getClass().isArray()) { //array
-                    Object[] args = (Object[]) obj;
-                    prompt = promptManager.prompt(promptKey, args);
-                } else if (obj instanceof List<?> list) {  // list
-                    prompt = promptManager.prompt(promptKey, list.toArray());
-                } else if (obj.getClass().isRecord()) { // record
-                    RecordComponent[] fields = obj.getClass().getRecordComponents();
-                    Object[] args = new Object[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        try {
-                            final Object value = fields[i].getAccessor().invoke(obj);
-                            args[i] = value;
-                        } catch (Exception ignore) {
-                            args[i] = null;
-                        }
-                    }
-                    prompt = promptManager.prompt(promptKey, args);
-                } else {  //object
-                    prompt = promptManager.prompt(promptKey, obj);
-                }
-            } else {
-                prompt = promptManager.prompt(promptKey);
-            }
-            final ChatCompletionRequest request = ChatRequestBuilder.of(prompt).model(model).build();
-            if (functionName != null && !functionName.isEmpty()) {
-                request.addFunction(functionName);
-                return (Mono<R>) chat(request).flatMap(ChatCompletionResponse::getFunctionResult);
-            } else {
-                return (Mono<R>) chat(request).map(ChatCompletionResponse::getReplyText);
-            }
-        };
-    }
+	@Override
+	public Mono<ChatCompletionResponse> chat(ChatCompletionRequest request) {
+		if (request.getModel() == null) {
+			request.setModel(model);
+		}
+		injectFunctions(request);
+		request.setStream(null);
+		boolean functionsIncluded = request.getFunctions() != null;
+		if (!functionsIncluded) {
+			return this.openAIChatAPI//
+				.chat(request);
+		} //
+		else {
+			return this.openAIChatAPI.chat(request)//
+				.doOnNext(response -> {
+					for (ChatMessage chatMessage : response.getReply()) {
+						injectFunctionCallLambda(chatMessage);
+					}
+				});
+		}
+	}
 
-    private void injectFunctions(ChatCompletionRequest request) {
-        final List<String> functionNames = request.getFunctionNames();
-        if (functionNames != null && !functionNames.isEmpty()) {
-            for (String functionName : functionNames) {
-                ChatFunction chatFunction = this.registry.getChatFunction(functionName);
-                if (chatFunction != null) {
-                    request.addFunction(chatFunction);
-                }
-            }
-        }
-        request.updateModelWithFunctionSupport();
-    }
+	@Override
+	public Flux<ChatCompletionResponse> stream(ChatCompletionRequest request) {
+		if (request.getModel() == null) {
+			request.setModel(model);
+		}
+		request.setStream(true);
+		injectFunctions(request);
+		boolean functionsIncluded = request.getFunctions() != null;
+		if (!functionsIncluded) {
+			return openAIChatAPI.stream(request).onErrorContinue((e, obj) -> {
+			});
+		}
+		else {
+			return openAIChatAPI.stream(request).onErrorContinue((e, obj) -> {
+			}).doOnNext(response -> {
+				for (ChatMessage chatMessage : response.getReply()) {
+					injectFunctionCallLambda(chatMessage);
+				}
+			});
+		}
+	}
 
-    private void injectFunctionCallLambda(ChatMessage chatMessage) {
-        final FunctionCall functionCall = chatMessage.getFunctionCall();
-        if (functionCall != null) {
-            final String functionName = functionCall.getName();
-            ChatGPTJavaFunction jsonSchemaFunction = registry.getJsonSchemaFunction(functionName);
-            if (jsonSchemaFunction != null) {
-                functionCall.setFunctionStub(() -> jsonSchemaFunction.call(functionCall.getArguments()) );
-            }
-        }
-    }
+	@Override
+	public <T> Function<T, Mono<String>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey) {
+		return promptAsLambda(promptKey, null);
+	}
+
+	@Override
+	public <T, R> Function<T, Mono<R>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey,
+			String functionName) {
+		return obj -> {
+			String prompt;
+			if (obj != null) {
+				if (obj.getClass().isArray()) { // array
+					Object[] args = (Object[]) obj;
+					prompt = promptManager.prompt(promptKey, args);
+				}
+				else if (obj instanceof List<?> list) { // list
+					prompt = promptManager.prompt(promptKey, list.toArray());
+				}
+				else if (obj.getClass().isRecord()) { // record
+					RecordComponent[] fields = obj.getClass().getRecordComponents();
+					Object[] args = new Object[fields.length];
+					for (int i = 0; i < fields.length; i++) {
+						try {
+							final Object value = fields[i].getAccessor().invoke(obj);
+							args[i] = value;
+						}
+						catch (Exception ignore) {
+							args[i] = null;
+						}
+					}
+					prompt = promptManager.prompt(promptKey, args);
+				}
+				else { // object
+					prompt = promptManager.prompt(promptKey, obj);
+				}
+			}
+			else {
+				prompt = promptManager.prompt(promptKey);
+			}
+			final ChatCompletionRequest request = ChatRequestBuilder.of(prompt).model(model).build();
+			if (functionName != null && !functionName.isEmpty()) {
+				request.addFunction(functionName);
+				return (Mono<R>) chat(request).flatMap(ChatCompletionResponse::getFunctionResult);
+			}
+			else {
+				return (Mono<R>) chat(request).map(ChatCompletionResponse::getReplyText);
+			}
+		};
+	}
+
+	private void injectFunctions(ChatCompletionRequest request) {
+		final List<String> functionNames = request.getFunctionNames();
+		if (functionNames != null && !functionNames.isEmpty()) {
+			for (String functionName : functionNames) {
+				ChatFunction chatFunction = this.registry.getChatFunction(functionName);
+				if (chatFunction != null) {
+					request.addFunction(chatFunction);
+				}
+			}
+		}
+		request.updateModelWithFunctionSupport();
+	}
+
+	private void injectFunctionCallLambda(ChatMessage chatMessage) {
+		final FunctionCall functionCall = chatMessage.getFunctionCall();
+		if (functionCall != null) {
+			final String functionName = functionCall.getName();
+			ChatGPTJavaFunction jsonSchemaFunction = registry.getJsonSchemaFunction(functionName);
+			if (jsonSchemaFunction != null) {
+				functionCall.setFunctionStub(() -> jsonSchemaFunction.call(functionCall.getArguments()));
+			}
+		}
+	}
+
 }

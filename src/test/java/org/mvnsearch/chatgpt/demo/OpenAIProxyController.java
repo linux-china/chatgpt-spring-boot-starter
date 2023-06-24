@@ -11,17 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OpenAIProxyController {
-    @Autowired
-    private OpenAIChatAPI openAIChatAPI;
 
-    /**
-     * Chat proxy to OpenAI API
-     *
-     * @param request chat request
-     * @return response
-     */
-    @PostMapping("/v1/chat/completions")
-    public Publisher<ChatCompletionResponse> completions(@RequestBody ChatCompletionRequest request) {
-        return openAIChatAPI.proxy(request);
-    }
+	@Autowired
+	private OpenAIChatAPI openAIChatAPI;
+
+	/**
+	 * Chat proxy to OpenAI API
+	 * @param request chat request
+	 * @return response
+	 */
+	@PostMapping("/v1/chat/completions")
+	public Publisher<ChatCompletionResponse> completions(@RequestBody ChatCompletionRequest request) {
+		return openAIChatAPI.proxy(request);
+	}
+
 }

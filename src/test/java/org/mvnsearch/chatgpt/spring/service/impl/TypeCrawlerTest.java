@@ -11,43 +11,48 @@ import java.util.Set;
 
 public class TypeCrawlerTest {
 
-    record Owner(String name) {
-    }
+	record Owner(String name) {
+	}
 
-    enum PetType {GOOD, GOODEST}
+	enum PetType {
 
-    class CatFactory implements FactoryBean<Cat> {
+		GOOD, GOODEST
 
-          CatFactory(Date date , Instant i ) {
-        }
+	}
 
-        @Override
-        public Cat getObject() throws Exception {
-            return new Cat(PetType.GOODEST, new Owner("You"));
-        }
+	class CatFactory implements FactoryBean<Cat> {
 
-        @Override
-        public Class<?> getObjectType() {
-            return Cat.class;
-        }
-    }
+		CatFactory(Date date, Instant i) {
+		}
 
-    record Cat(PetType p, Owner owner) {
-        void meow(Runnable runnable) {
-        }
-    }
+		@Override
+		public Cat getObject() throws Exception {
+			return new Cat(PetType.GOODEST, new Owner("You"));
+		}
 
+		@Override
+		public Class<?> getObjectType() {
+			return Cat.class;
+		}
 
-    @Test
-    void crawl() {
-        Set<Type> seen = TypeCrawler.crawl(CatFactory.class);
-        Assertions.assertTrue(seen.contains(PetType.class));
-        Assertions.assertTrue(seen.contains(Owner.class));
-        Assertions.assertTrue(seen.contains(Runnable.class));
-        Assertions.assertTrue(seen.contains(String.class));
-        Assertions.assertTrue(seen.contains(CatFactory.class));
-        Assertions.assertTrue(seen.contains(Instant.class));
-        Assertions.assertTrue(seen.contains(Date.class));
+	}
 
-    }
+	record Cat(PetType p, Owner owner) {
+		void meow(Runnable runnable) {
+		}
+	}
+
+	@Test
+	void crawl() {
+		Set<Type> seen = TypeCrawler.crawl(CatFactory.class);
+		Assertions.assertTrue(seen.contains(PetType.class));
+		Assertions.assertTrue(seen.contains(Owner.class));
+		Assertions.assertTrue(seen.contains(Runnable.class));
+		Assertions.assertTrue(seen.contains(String.class));
+		Assertions.assertTrue(seen.contains(CatFactory.class));
+		Assertions.assertTrue(seen.contains(Instant.class));
+		Assertions.assertTrue(seen.contains(Date.class));
+
+	}
+
 }

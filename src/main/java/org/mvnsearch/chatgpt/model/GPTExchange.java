@@ -9,18 +9,20 @@ import java.lang.annotation.*;
  *
  * @author linux_china
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface GPTExchange {
-    String value() default "";
 
-    @AliasFor("value")
-    String model() default "";
+	String value() default "";
 
-    double temperature() default -1;
+	@AliasFor("value")
+	String model() default "";
 
-    int maxTokens() default -1;
+	double temperature() default -1;
 
-    String[] functions() default {};
+	int maxTokens() default -1;
+
+	String[] functions() default {};
+
 }
