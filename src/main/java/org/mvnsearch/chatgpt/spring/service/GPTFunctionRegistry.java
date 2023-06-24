@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.spring.service.impl;
+package org.mvnsearch.chatgpt.spring.service;
 
 import org.mvnsearch.chatgpt.model.ChatFunction;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
@@ -17,14 +17,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.RecordComponent;
-import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -103,46 +97,6 @@ class GPTFunctionRegistry
 	@Override
 	public boolean isBeanExcludedFromAotProcessing() {
 		return false;
-	}
-
-}
-
-abstract class TypeCrawler {
-
-	public static Set<Type> crawl(Type t) {
-		Set<Type> seen = new HashSet<>();
-		crawl(t, seen);
-		return seen;
-	}
-
-	private static void crawl(Type type, Set<Type> seen) {
-		if (seen.contains(type)) {
-			return;
-		}
-		seen.add(type);
-		if (type instanceof Class<?> clazz) {
-
-			for (Constructor c : clazz.getDeclaredConstructors()) {
-
-				for (Type t : c.getParameterTypes()) {
-					crawl(t, seen);
-				}
-			}
-
-			if (clazz.getRecordComponents() != null) {
-				for (RecordComponent component : clazz.getRecordComponents()) {
-					crawl(component.getType(), seen);
-				}
-			}
-			for (Method m : clazz.getDeclaredMethods()) {
-				crawl(m.getReturnType(), seen);
-				crawl(m.getGenericReturnType(), seen);
-				for (Class<?> c : m.getParameterTypes()) {
-					crawl(c, seen);
-				}
-			}
-		} //
-
 	}
 
 }

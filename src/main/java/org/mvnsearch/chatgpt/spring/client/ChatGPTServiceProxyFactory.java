@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.spring.exchange;
+package org.mvnsearch.chatgpt.spring.client;
 
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.mvnsearch.chatgpt.spring.service.PromptManager;

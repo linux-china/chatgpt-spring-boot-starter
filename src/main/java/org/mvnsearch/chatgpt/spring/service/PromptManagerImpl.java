@@ -1,20 +1,18 @@
-package org.mvnsearch.chatgpt.spring.service.impl;
+package org.mvnsearch.chatgpt.spring.service;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
-import org.mvnsearch.chatgpt.spring.service.PromptManager;
-import org.mvnsearch.chatgpt.spring.service.PromptStore;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PromptManagerImpl implements PromptManager {
+class PromptManagerImpl implements PromptManager {
 
 	private final Map<String, String> allPrompts = new HashMap<>();
 
-	public PromptManagerImpl(List<PromptStore> promptStores) throws Exception {
+	PromptManagerImpl(List<PromptStore> promptStores) throws Exception {
 		for (PromptStore promptStore : promptStores) {
 			allPrompts.putAll(promptStore.readAll());
 		}

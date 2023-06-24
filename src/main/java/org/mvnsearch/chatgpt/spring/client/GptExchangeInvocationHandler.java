@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.spring.exchange;
+package org.mvnsearch.chatgpt.spring.client;
 
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class GptExchangeInvocationHandler implements InvocationHandler {
+class GptExchangeInvocationHandler implements InvocationHandler {
 
 	private final ChatGPTService chatGPTService;
 

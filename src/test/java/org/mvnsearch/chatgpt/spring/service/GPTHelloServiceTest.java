@@ -4,27 +4,35 @@ import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
 import org.mvnsearch.chatgpt.demo.service.GPTHelloService;
 import org.springframework.beans.factory.annotation.Autowired;
-import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-public class GPTHelloServiceTest extends ProjectBootBaseTest {
+import java.util.Locale;
+
+class GPTHelloServiceTest extends ProjectBootBaseTest {
 
 	@Autowired
 	private GPTHelloService helloService;
 
 	@Test
-	public void testTranslateIntoChinse() throws Exception {
-		System.out.println(helloService.translateIntoChinese("Hello").block());
+	void testTranslateIntoChinese() {
+		StepVerifier.create(helloService.translateIntoChinese("Hello").map(result -> result.length() > 0))
+			.expectNext(true)
+			.verifyComplete();
 	}
 
 	@Test
-	public void testTranslate() throws Exception {
-		final Mono<String> translate = helloService.translate("Chinese", "English", "你好！");
-		System.out.println(translate.block());
+	void testTranslate() {
+		StepVerifier.create(helloService.translate("Chinese", "English", "你好！"))
+			.expectNextMatches(result -> result.toLowerCase(Locale.ENGLISH).contains("hello"))
+			.verifyComplete();
+
 	}
 
 	@Test
-	public void testTranslateFromTemplate() throws Exception {
-		System.out.println(helloService.translateFromTemplate("Chinese", "English", "你好！").block());
+	void testTranslateFromTemplate() {
+		StepVerifier.create(helloService.translateFromTemplate("Chinese", "English", "你好！"))
+			.expectNextMatches(result -> result.toLowerCase(Locale.ENGLISH).contains("hello"))
+			.verifyComplete();
 	}
 
 }
