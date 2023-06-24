@@ -71,6 +71,7 @@ public class ChatCompletionResponse {
 		this.object = object;
 	}
 
+	@JsonIgnore
 	public boolean isEmpty() {
 		return choices == null || choices.isEmpty();
 	}
