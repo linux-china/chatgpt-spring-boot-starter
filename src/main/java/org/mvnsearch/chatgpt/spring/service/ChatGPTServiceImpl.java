@@ -1,11 +1,8 @@
-package org.mvnsearch.chatgpt.spring.service.impl;
+package org.mvnsearch.chatgpt.spring.service;
 
 import org.jetbrains.annotations.PropertyKey;
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
-import org.mvnsearch.chatgpt.spring.http.OpenAIChatAPI;
-import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
-import org.mvnsearch.chatgpt.spring.service.PromptManager;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

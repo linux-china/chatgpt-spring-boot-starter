@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.spring.service.impl;
+package org.mvnsearch.chatgpt.spring.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 
-public class TypeCrawlerTest {
+class TypeCrawlerTest {
 
 	record Owner(String name) {
 	}

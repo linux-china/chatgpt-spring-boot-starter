@@ -1,6 +1,4 @@
-package org.mvnsearch.chatgpt.spring.service.impl;
-
-import org.mvnsearch.chatgpt.spring.service.PromptStore;
+package org.mvnsearch.chatgpt.spring.service;
 
 import java.net.URL;
 import java.util.Enumeration;
@@ -13,7 +11,7 @@ import java.util.Properties;
  *
  * @author linux_china
  */
-public class PromptPropertiesStoreImpl implements PromptStore {
+class PromptPropertiesStoreImpl implements PromptStore {
 
 	@Override
 	public Map<String, String> readAll() {
