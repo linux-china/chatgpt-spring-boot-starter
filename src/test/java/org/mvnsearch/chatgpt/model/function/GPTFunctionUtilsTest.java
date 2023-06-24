@@ -9,16 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class GPTFunctionUtilsTest {
 
-    @Test
-    public void testExtractFunctions() throws Exception {
+	@Test
+	public void testExtractFunctions() throws Exception {
 
-        final var expected = List.of("sendEmail", "executeSQLQuery");
-        final var actual = GPTFunctionUtils.extractFunctions(GPTFunctions.class)
-                .values()
-                .stream()
-                .map(m -> m.getJavaMethod().getName())
-                .toList();
+		final var expected = List.of("sendEmail", "executeSQLQuery");
+		final var actual = GPTFunctionUtils.extractFunctions(GPTFunctions.class)
+			.values()
+			.stream()
+			.map(m -> m.getJavaMethod().getName())
+			.toList();
 
-        assertIterableEquals(expected, actual);
-    }
+		assertIterableEquals(expected, actual);
+	}
+
 }

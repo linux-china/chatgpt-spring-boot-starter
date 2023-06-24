@@ -6,9 +6,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Parameter {
-    String value() default "";
 
-    String name() default "";
+	String value() default "";
 
-    boolean required() default false;
+	String name() default "";
+
+	boolean required() default false;
+
 }

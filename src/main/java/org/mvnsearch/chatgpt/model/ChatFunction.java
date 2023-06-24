@@ -8,161 +8,177 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatFunction {
-    private String name;
-    private String description;
-    private Parameters parameters;
 
-    public String getName() {
-        return name;
-    }
+	private String name;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	private String description;
 
-    public String getDescription() {
-        return description;
-    }
+	private Parameters parameters;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Parameters getParameters() {
-        return parameters;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setParameters(Parameters parameters) {
-        this.parameters = parameters;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public static class Parameters {
-        private String type;
-        private Map<String, JsonSchemaProperty> properties;
-        private List<String> required;
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-        public Parameters() {
-        }
+	public Parameters getParameters() {
+		return parameters;
+	}
 
-        public Parameters(String type, Map<String, JsonSchemaProperty> properties, List<String> required) {
-            this.type = type;
-            this.properties = properties;
-            this.required = required;
-        }
+	public void setParameters(Parameters parameters) {
+		this.parameters = parameters;
+	}
 
-        public String getType() {
-            return type;
-        }
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	public static class Parameters {
 
-        public void setType(String type) {
-            this.type = type;
-        }
+		private String type;
 
-        public Map<String, JsonSchemaProperty> getProperties() {
-            return properties;
-        }
+		private Map<String, JsonSchemaProperty> properties;
 
-        public void setProperties(Map<String, JsonSchemaProperty> properties) {
-            this.properties = properties;
-        }
+		private List<String> required;
 
-        public List<String> getRequired() {
-            return required;
-        }
+		public Parameters() {
+		}
 
-        public void setRequired(List<String> required) {
-            this.required = required;
-        }
-    }
+		public Parameters(String type, Map<String, JsonSchemaProperty> properties, List<String> required) {
+			this.type = type;
+			this.properties = properties;
+			this.required = required;
+		}
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class JsonSchemaProperty {
-        @JsonIgnore
-        private String name;
-        private String type;
-        private String description;
-        /**
-         * items for type array
-         */
-        private JsonArrayItems items;
+		public String getType() {
+			return type;
+		}
 
-        public JsonSchemaProperty() {
-        }
+		public void setType(String type) {
+			this.type = type;
+		}
 
-        public JsonSchemaProperty(String name, String type, String description) {
-            this.name = name;
-            this.type = type;
-            this.description = description;
-        }
+		public Map<String, JsonSchemaProperty> getProperties() {
+			return properties;
+		}
 
-        public JsonSchemaProperty(String name, String type, String description, JsonArrayItems items) {
-            this.name = name;
-            this.type = type;
-            this.description = description;
-            this.items = items;
-        }
+		public void setProperties(Map<String, JsonSchemaProperty> properties) {
+			this.properties = properties;
+		}
 
-        public String getName() {
-            return name;
-        }
+		public List<String> getRequired() {
+			return required;
+		}
 
-        public void setName(String name) {
-            this.name = name;
-        }
+		public void setRequired(List<String> required) {
+			this.required = required;
+		}
 
-        public String getType() {
-            return type;
-        }
+	}
 
-        public void setType(String type) {
-            this.type = type;
-        }
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class JsonSchemaProperty {
 
-        public String getDescription() {
-            return description;
-        }
+		@JsonIgnore
+		private String name;
 
-        public void setDescription(String description) {
-            this.description = description;
-        }
+		private String type;
 
-        public JsonArrayItems getItems() {
-            return items;
-        }
+		private String description;
 
-        public void setItems(JsonArrayItems items) {
-            this.items = items;
-        }
-    }
+		/**
+		 * items for type array
+		 */
+		private JsonArrayItems items;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class JsonArrayItems {
-        private String type;
-        private String description;
+		public JsonSchemaProperty() {
+		}
 
-        public JsonArrayItems() {
-        }
+		public JsonSchemaProperty(String name, String type, String description) {
+			this.name = name;
+			this.type = type;
+			this.description = description;
+		}
 
-        public JsonArrayItems(String type, String description) {
-            this.type = type;
-            this.description = description;
-        }
+		public JsonSchemaProperty(String name, String type, String description, JsonArrayItems items) {
+			this.name = name;
+			this.type = type;
+			this.description = description;
+			this.items = items;
+		}
 
-        public String getType() {
-            return type;
-        }
+		public String getName() {
+			return name;
+		}
 
-        public void setType(String type) {
-            this.type = type;
-        }
+		public void setName(String name) {
+			this.name = name;
+		}
 
-        public String getDescription() {
-            return description;
-        }
+		public String getType() {
+			return type;
+		}
 
-        public void setDescription(String description) {
-            this.description = description;
-        }
-    }
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public JsonArrayItems getItems() {
+			return items;
+		}
+
+		public void setItems(JsonArrayItems items) {
+			this.items = items;
+		}
+
+	}
+
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public static class JsonArrayItems {
+
+		private String type;
+
+		private String description;
+
+		public JsonArrayItems() {
+		}
+
+		public JsonArrayItems(String type, String description) {
+			this.type = type;
+			this.description = description;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+	}
+
 }

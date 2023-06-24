@@ -1,6 +1,5 @@
 package org.mvnsearch.chatgpt.demo;
 
-
 import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
 import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
@@ -11,25 +10,23 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class ChatRobotController {
-    @Autowired
-    private ChatGPTService chatGPTService;
 
-    @PostMapping("/chat")
-    public Mono<String> chat(@RequestBody String content) {
-        return chatGPTService.chat(ChatCompletionRequest.of(content))
-                .map(ChatCompletionResponse::getReplyText);
-    }
+	@Autowired
+	private ChatGPTService chatGPTService;
 
-    /**
-     * stream chat by server-sent events
-     *
-     * @param content message content
-     * @return SSE flux
-     */
-    @GetMapping("/stream-chat")
-    public Flux<String> streamChat(@RequestParam String content) {
-        return chatGPTService.stream(ChatCompletionRequest.of(content))
-                .map(ChatCompletionResponse::getReplyText);
-    }
+	@PostMapping("/chat")
+	public Mono<String> chat(@RequestBody String content) {
+		return chatGPTService.chat(ChatCompletionRequest.of(content)).map(ChatCompletionResponse::getReplyText);
+	}
+
+	/**
+	 * stream chat by server-sent events
+	 * @param content message content
+	 * @return SSE flux
+	 */
+	@GetMapping("/stream-chat")
+	public Flux<String> streamChat(@RequestParam String content) {
+		return chatGPTService.stream(ChatCompletionRequest.of(content)).map(ChatCompletionResponse::getReplyText);
+	}
 
 }

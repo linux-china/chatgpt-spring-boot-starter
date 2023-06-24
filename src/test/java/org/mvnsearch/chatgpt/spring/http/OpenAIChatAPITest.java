@@ -7,16 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class OpenAIChatAPITest extends ProjectBootBaseTest {
 
-    @Autowired
-    private OpenAIChatAPI openAIChatAPI;
+	@Autowired
+	private OpenAIChatAPI openAIChatAPI;
 
-    @Test
-    public void testStream() throws Exception {
-        ChatCompletionRequest request = ChatCompletionRequest.of("What's Java Language? Please give me simple example, and guide me how to run the example.");
-        request.setStream(true);
-        openAIChatAPI.stream(request).subscribe(response -> {
-            System.out.println(response.getReplyText());
-        });
-        Thread.sleep(60000);
-    }
+	@Test
+	public void testStream() throws Exception {
+		ChatCompletionRequest request = ChatCompletionRequest
+			.of("What's Java Language? Please give me simple example, and guide me how to run the example.");
+		request.setStream(true);
+		openAIChatAPI.stream(request).subscribe(response -> {
+			System.out.println(response.getReplyText());
+		});
+		Thread.sleep(60000);
+	}
+
 }

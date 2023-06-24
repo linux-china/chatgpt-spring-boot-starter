@@ -7,20 +7,19 @@ import java.lang.reflect.Proxy;
 
 public class ChatGPTServiceProxyFactory {
 
-    private final ChatGPTService chatGPTService;
-    private final PromptManager promptManager;
+	private final ChatGPTService chatGPTService;
 
-    public ChatGPTServiceProxyFactory(ChatGPTService chatGPTService, PromptManager promptManager) {
-        this.chatGPTService = chatGPTService;
-        this.promptManager = promptManager;
-    }
+	private final PromptManager promptManager;
 
-    @SuppressWarnings("unchecked")
-    public <T> T createClient(Class<T> clazz) {
-        return (T) Proxy.newProxyInstance(
-                clazz.getClassLoader(),
-                new Class[]{clazz},
-                new GptExchangeInvocationHandler(chatGPTService, promptManager, clazz));
-    }
+	public ChatGPTServiceProxyFactory(ChatGPTService chatGPTService, PromptManager promptManager) {
+		this.chatGPTService = chatGPTService;
+		this.promptManager = promptManager;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T createClient(Class<T> clazz) {
+		return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[] { clazz },
+				new GptExchangeInvocationHandler(chatGPTService, promptManager, clazz));
+	}
 
 }

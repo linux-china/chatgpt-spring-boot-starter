@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class ChatGPTDemoApp {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ChatGPTDemoApp.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(ChatGPTDemoApp.class, args);
+	}
 
-    @Bean
-    public GPTHelloService gptHelloService(ChatGPTServiceProxyFactory proxyFactory) {
-        return proxyFactory.createClient(GPTHelloService.class);
-    }
+	@Bean
+	public GPTHelloService gptHelloService(ChatGPTServiceProxyFactory proxyFactory) {
+		return proxyFactory.createClient(GPTHelloService.class);
+	}
 
 }

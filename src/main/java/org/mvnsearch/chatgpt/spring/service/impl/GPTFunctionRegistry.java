@@ -30,120 +30,119 @@ import java.util.stream.Stream;
 /**
  * Repository for all GPT callback functions.
  */
-class GPTFunctionRegistry implements BeanRegistrationAotProcessor, BeanPostProcessor, ApplicationListener<ApplicationReadyEvent> {
+class GPTFunctionRegistry
+		implements BeanRegistrationAotProcessor, BeanPostProcessor, ApplicationListener<ApplicationReadyEvent> {
 
+	private static final Logger log = LoggerFactory.getLogger(GPTFunctionRegistry.class);
 
-    private static final Logger log = LoggerFactory.getLogger(GPTFunctionRegistry.class);
+	private final BindingReflectionHintsRegistrar reflectionRegistrar = new BindingReflectionHintsRegistrar();
 
-    private final BindingReflectionHintsRegistrar reflectionRegistrar = new BindingReflectionHintsRegistrar();
+	private final Map<String, ChatGPTJavaFunction> allJsonSchemaFunctions = new HashMap<>();
 
-    private final Map<String, ChatGPTJavaFunction> allJsonSchemaFunctions = new HashMap<>();
+	private final Map<String, ChatFunction> allChatFunctions = new HashMap<>();
 
-    private final Map<String, ChatFunction> allChatFunctions = new HashMap<>();
+	public ChatFunction getChatFunction(String functionName) {
+		return this.allChatFunctions.get(functionName);
+	}
 
+	public ChatGPTJavaFunction getJsonSchemaFunction(String functionName) {
+		return this.allJsonSchemaFunctions.get(functionName);
+	}
 
-    public ChatFunction getChatFunction(String functionName) {
-        return this.allChatFunctions.get(functionName);
-    }
+	@Override
+	public void onApplicationEvent(ApplicationReadyEvent event) {
+		log.info("ChatGPTService initialized with {} functions", allJsonSchemaFunctions.size());
+	}
 
-    public ChatGPTJavaFunction getJsonSchemaFunction(String functionName) {
-        return this.allJsonSchemaFunctions.get(functionName);
-    }
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		try {
+			final Map<String, ChatGPTJavaFunction> functions = GPTFunctionUtils.extractFunctions(bean.getClass());
+			if (!functions.isEmpty()) {
+				log.info("found [" + functions.size() + "] functions on bean name [" + beanName + "] with class ["
+						+ bean.getClass().getName() + "]");
+				for (Map.Entry<String, ChatGPTJavaFunction> entry : functions.entrySet()) {
+					final ChatGPTJavaFunction jsonSchemaFunction = entry.getValue();
+					jsonSchemaFunction.setTarget(bean);
+					this.allJsonSchemaFunctions.put(entry.getKey(), jsonSchemaFunction);
+					this.allChatFunctions.put(entry.getKey(), jsonSchemaFunction.toChatFunction());
+				}
+			}
+		} //
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return bean;
+	}
 
-    @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
-        log.info("ChatGPTService initialized with {} functions", allJsonSchemaFunctions.size());
-    }
+	@Override
+	public BeanRegistrationAotContribution processAheadOfTime(RegisteredBean registeredBean) {
+		final Class<?> beanClass = registeredBean.getBeanClass();
+		try {
+			final Map<String, ChatGPTJavaFunction> functions = GPTFunctionUtils.extractFunctions(beanClass);
+			functions
+				.forEach((functionName, function) -> log.info("Registering hints for function name [" + functionName
+						+ "] on bean [" + registeredBean.getBeanName() + "] with class [" + beanClass.getName() + "]"));
+			if (!functions.isEmpty()) {
+				return (generationContext, beanRegistrationCode) -> {
+					final ReflectionHints reflection = generationContext.getRuntimeHints().reflection();
+					reflection.registerType(beanClass, MemberCategory.values());
+					this.reflectionRegistrar.registerReflectionHints(reflection, beanClass);
+					ReflectionUtils.doWithMethods(beanClass, method -> Stream.of(method.getParameters())
+						.forEach(param -> reflection.registerType(param.getType(), MemberCategory.values())));
+				};
+			}
+		} //
+		catch (Exception e) {
+			throw new RuntimeException("couldn't read the functions on bean class [" + beanClass.getName() + "]");
+		}
 
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        try {
-            final Map<String, ChatGPTJavaFunction> functions = GPTFunctionUtils.extractFunctions(bean.getClass());
-            if (!functions.isEmpty()) {
-                log.info("found [" + functions.size() + "] functions on bean name [" + beanName + "] with class [" +
-                         bean.getClass().getName() + "]");
-                for (Map.Entry<String, ChatGPTJavaFunction> entry : functions.entrySet()) {
-                    final ChatGPTJavaFunction jsonSchemaFunction = entry.getValue();
-                    jsonSchemaFunction.setTarget(bean);
-                    this.allJsonSchemaFunctions.put(entry.getKey(), jsonSchemaFunction);
-                    this.allChatFunctions.put(entry.getKey(), jsonSchemaFunction.toChatFunction());
-                }
-            }
-        }//
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return bean;
-    }
+		return null;
+	}
 
-
-    @Override
-    public BeanRegistrationAotContribution processAheadOfTime(RegisteredBean registeredBean) {
-        final Class<?> beanClass = registeredBean.getBeanClass();
-        try {
-            final Map<String, ChatGPTJavaFunction> functions = GPTFunctionUtils.extractFunctions(beanClass);
-            functions.forEach((functionName, function) -> log.info("Registering hints for function name [" + functionName + "] on bean [" + registeredBean.getBeanName() + "] with class [" + beanClass.getName() + "]"));
-            if (!functions.isEmpty()) {
-                return (generationContext, beanRegistrationCode) -> {
-                    final ReflectionHints reflection = generationContext.getRuntimeHints().reflection();
-                    reflection.registerType(beanClass, MemberCategory.values());
-                    this.reflectionRegistrar.registerReflectionHints(reflection, beanClass);
-                    ReflectionUtils.doWithMethods(beanClass, method -> Stream.of(method.getParameters()).forEach(param -> reflection.registerType(param.getType(), MemberCategory.values())));
-                };
-            }
-        }//
-        catch (Exception e) {
-            throw new RuntimeException("couldn't read the functions on bean class [" + beanClass.getName() + "]");
-        }
-
-        return null;
-    }
-
-    @Override
-    public boolean isBeanExcludedFromAotProcessing() {
-        return false;
-    }
-
+	@Override
+	public boolean isBeanExcludedFromAotProcessing() {
+		return false;
+	}
 
 }
 
-
 abstract class TypeCrawler {
 
-    public static Set<Type> crawl(Type t) {
-        Set<Type> seen = new HashSet<>();
-        crawl(t, seen);
-        return seen;
-    }
+	public static Set<Type> crawl(Type t) {
+		Set<Type> seen = new HashSet<>();
+		crawl(t, seen);
+		return seen;
+	}
 
-    private static void crawl(Type type, Set<Type> seen) {
-        if (seen.contains(type)) {
-            return;
-        }
-        seen.add(type);
-        if (type instanceof Class<?> clazz) {
+	private static void crawl(Type type, Set<Type> seen) {
+		if (seen.contains(type)) {
+			return;
+		}
+		seen.add(type);
+		if (type instanceof Class<?> clazz) {
 
+			for (Constructor c : clazz.getDeclaredConstructors()) {
 
-            for (Constructor c : clazz.getDeclaredConstructors()) {
+				for (Type t : c.getParameterTypes()) {
+					crawl(t, seen);
+				}
+			}
 
-                for (Type t : c.getParameterTypes()) {
-                    crawl(t, seen);
-                }
-            }
+			if (clazz.getRecordComponents() != null) {
+				for (RecordComponent component : clazz.getRecordComponents()) {
+					crawl(component.getType(), seen);
+				}
+			}
+			for (Method m : clazz.getDeclaredMethods()) {
+				crawl(m.getReturnType(), seen);
+				crawl(m.getGenericReturnType(), seen);
+				for (Class<?> c : m.getParameterTypes()) {
+					crawl(c, seen);
+				}
+			}
+		} //
 
-            if (clazz.getRecordComponents() != null) {
-                for (RecordComponent component : clazz.getRecordComponents()) {
-                    crawl(component.getType(), seen);
-                }
-            }
-            for (Method m : clazz.getDeclaredMethods()) {
-                crawl(m.getReturnType(), seen);
-                crawl(m.getGenericReturnType(), seen);
-                for (Class<?> c : m.getParameterTypes()) {
-                    crawl(c, seen);
-                }
-            }
-        }//
+	}
 
-    }
 }
