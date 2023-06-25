@@ -3,12 +3,10 @@ package org.mvnsearch.chatgpt.spring.service;
 import org.jetbrains.annotations.PropertyKey;
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
-import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import org.mvnsearch.chatgpt.spring.constants.ChatGPTConstants;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.RecordComponent;
 import java.util.List;
 import java.util.function.Function;
 
@@ -82,25 +80,7 @@ class ChatGPTServiceImpl implements ChatGPTService {
 	public <T, R> Function<T, Mono<R>> promptAsLambda(@PropertyKey(resourceBundle = PROMPTS_FQN) String promptKey,
 			String functionName) {
 		return obj -> {
-			String prompt;
-			if (obj != null) {
-				if (obj.getClass().isArray()) { // array
-					Object[] args = (Object[]) obj;
-					prompt = promptManager.prompt(promptKey, args);
-				}
-				else if (obj instanceof List<?> list) { // list
-					prompt = promptManager.prompt(promptKey, list.toArray());
-				}
-				else if (obj.getClass().isRecord()) { // record
-					prompt = promptManager.prompt(promptKey, GPTFunctionUtils.convertRecordToArray(obj));
-				}
-				else { // object
-					prompt = promptManager.prompt(promptKey, obj);
-				}
-			}
-			else {
-				prompt = promptManager.prompt(promptKey);
-			}
+			String prompt = promptManager.prompt(promptKey, obj);
 			final ChatCompletionRequest request = ChatRequestBuilder.of(prompt).model(model).build();
 			if (functionName != null && !functionName.isEmpty()) {
 				request.addFunction(functionName);
@@ -112,7 +92,7 @@ class ChatGPTServiceImpl implements ChatGPTService {
 		};
 	}
 
-	private void buildChatCompletionRequest(ChatCompletionRequest request){
+	private void buildChatCompletionRequest(ChatCompletionRequest request) {
 		if (request.getModel() == null) {
 			request.setModel(model);
 		}
