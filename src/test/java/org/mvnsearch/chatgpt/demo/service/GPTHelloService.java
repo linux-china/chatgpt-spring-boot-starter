@@ -7,6 +7,9 @@ import reactor.core.publisher.Mono;
 @GPTExchange
 public interface GPTHelloService {
 
+	@ChatCompletion("Write a concise summary of the following:\n{0}")
+	Mono<String> summarize(String text);
+
 	@ChatCompletion("You are a language translator, please translate the below text to Chinese.\n")
 	Mono<String> translateIntoChinese(String text);
 
