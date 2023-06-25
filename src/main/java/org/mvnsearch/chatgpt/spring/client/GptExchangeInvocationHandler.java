@@ -1,6 +1,8 @@
 package org.mvnsearch.chatgpt.spring.client;
 
 import org.mvnsearch.chatgpt.model.*;
+import org.mvnsearch.chatgpt.model.function.GPTFunction;
+import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.mvnsearch.chatgpt.spring.service.PromptManager;
 
@@ -109,7 +111,12 @@ class GptExchangeInvocationHandler implements InvocationHandler {
 	public String formatChatMessage(String role, String content, Object[] args) {
 		if (args != null && args.length > 0) {
 			if (content.contains("{") && content.contains("}")) {
-				content = MessageFormat.format(content, args);
+				if (args.length == 1 && args[0].getClass().isRecord()) {
+					content = MessageFormat.format(content, GPTFunctionUtils.convertRecordToArray(args[0]));
+				}
+				else {
+					content = MessageFormat.format(content, args);
+				}
 			}
 			else if (Objects.equals(role, "user")) {
 				StringBuilder sb = new StringBuilder(content);

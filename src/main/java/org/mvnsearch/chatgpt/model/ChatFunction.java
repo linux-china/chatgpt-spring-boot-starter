@@ -98,6 +98,11 @@ public class ChatFunction {
 		 */
 		private JsonArrayItems items;
 
+		/**
+		 * properties for object type
+		 */
+		private Map<String, JsonSchemaProperty> properties;
+
 		public JsonSchemaProperty() {
 		}
 
@@ -144,6 +149,14 @@ public class ChatFunction {
 
 		public void setItems(JsonArrayItems items) {
 			this.items = items;
+		}
+
+		public Map<String, JsonSchemaProperty> getProperties() {
+			return properties;
+		}
+
+		public void setProperties(Map<String, JsonSchemaProperty> properties) {
+			this.properties = properties;
 		}
 
 	}

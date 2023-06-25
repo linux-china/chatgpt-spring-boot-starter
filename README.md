@@ -199,23 +199,26 @@ Tips:
 
 * Prompt template code completion: support by `@PropertyKey(resourceBundle = PROMPTS_FQN)`
 * `@ChatCompletion` annotation has built-in prompt template support for `user`,`system` and `assistant` messages.
+* Prompt value could be from classpath and URL: `conversation=classpath:///conversation-prompt.txt` or `conversation=https://example.com/conversation-prompt.txt`
 
 ### Prompt Template as Lambda
 
 For some case you want to use prompt template as lambda, such as translate first, then send it as email.
 You can declare prompt as function and chain them together.
 
-```
+```java
+public class PromptLambdaTest {
     @Test
     public void testPromptAsFunction() {
-        Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService.promptAsFunction("translate-into-chinese");
-        Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsFunction("send-email");
+        Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService.promptAsLambda("translate-into-chinese");
+        Function<String, Mono<String>> sendEmailFunction = chatGPTService.promptAsLambda("send-email");
         String result = Mono.just("Hi Jackie, could you write an email to Libing(libing.chen@exaple.com) and Sam(linux_china@example.com) and invite them to join Mike's birthday party at 4 pm tomorrow? Thanks!")
                 .flatMap(translateIntoChineseFunction)
                 .flatMap(sendEmailFunction)
                 .block();
         System.out.println(result);
     }
+}
 ```
 
 To keep placeholders safe in prompt template, you can use record as Lambda parameter.

@@ -3,6 +3,7 @@ package org.mvnsearch.chatgpt.spring.service;
 import org.jetbrains.annotations.PropertyKey;
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
+import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -96,18 +97,7 @@ class ChatGPTServiceImpl implements ChatGPTService {
 					prompt = promptManager.prompt(promptKey, list.toArray());
 				}
 				else if (obj.getClass().isRecord()) { // record
-					RecordComponent[] fields = obj.getClass().getRecordComponents();
-					Object[] args = new Object[fields.length];
-					for (int i = 0; i < fields.length; i++) {
-						try {
-							final Object value = fields[i].getAccessor().invoke(obj);
-							args[i] = value;
-						}
-						catch (Exception ignore) {
-							args[i] = null;
-						}
-					}
-					prompt = promptManager.prompt(promptKey, args);
+					prompt = promptManager.prompt(promptKey, GPTFunctionUtils.convertRecordToArray(obj));
 				}
 				else { // object
 					prompt = promptManager.prompt(promptKey, obj);

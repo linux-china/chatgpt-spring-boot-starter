@@ -2,6 +2,7 @@ package org.mvnsearch.chatgpt.model.function;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.RecordComponent;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -209,6 +211,21 @@ public class GPTFunctionUtils {
 			case "java.lang.String" -> String.class;
 			default -> Object.class;
 		};
+	}
+
+	public static Object[] convertRecordToArray(@NotNull Object obj) {
+		RecordComponent[] fields = obj.getClass().getRecordComponents();
+		Object[] args = new Object[fields.length];
+		for (int i = 0; i < fields.length; i++) {
+			try {
+				final Object value = fields[i].getAccessor().invoke(obj);
+				args[i] = value;
+			}
+			catch (Exception ignore) {
+				args[i] = null;
+			}
+		}
+		return args;
 	}
 
 }

@@ -21,6 +21,14 @@ class GPTHelloServiceTest extends ProjectBootBaseTest {
 	}
 
 	@Test
+	public void testUnaryTranslate() {
+		GPTHelloService.TranslateRequest request = new GPTHelloService.TranslateRequest("Chinese", "English", "你好！");
+		StepVerifier.create(helloService.unaryTranslate(request).map(result -> result.contains("Hello")))
+			.expectNext(true)
+			.verifyComplete();
+	}
+
+	@Test
 	void testTranslate() {
 		StepVerifier.create(helloService.translate("Chinese", "English", "你好！"))
 			.expectNextMatches(result -> result.toLowerCase(Locale.ENGLISH).contains("hello"))
