@@ -4,6 +4,7 @@ import org.jetbrains.annotations.PropertyKey;
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
+import org.mvnsearch.chatgpt.spring.constants.ChatGPTConstants;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +22,7 @@ class ChatGPTServiceImpl implements ChatGPTService {
 
 	private final GPTFunctionRegistry registry;
 
-	private String model = "gpt-3.5-turbo";
+	private String model = ChatGPTConstants.DEFAULT_MODEL;
 
 	ChatGPTServiceImpl(OpenAIChatAPI openAIChatAPI, PromptManager promptManager, GPTFunctionRegistry registry)
 			throws Exception {
@@ -36,10 +37,7 @@ class ChatGPTServiceImpl implements ChatGPTService {
 
 	@Override
 	public Mono<ChatCompletionResponse> chat(ChatCompletionRequest request) {
-		if (request.getModel() == null) {
-			request.setModel(model);
-		}
-		injectFunctions(request);
+		buildChatCompletionRequest(request);
 		request.setStream(null);
 		boolean functionsIncluded = request.getFunctions() != null;
 		if (!functionsIncluded) {
@@ -58,11 +56,8 @@ class ChatGPTServiceImpl implements ChatGPTService {
 
 	@Override
 	public Flux<ChatCompletionResponse> stream(ChatCompletionRequest request) {
-		if (request.getModel() == null) {
-			request.setModel(model);
-		}
+		buildChatCompletionRequest(request);
 		request.setStream(true);
-		injectFunctions(request);
 		boolean functionsIncluded = request.getFunctions() != null;
 		if (!functionsIncluded) {
 			return openAIChatAPI.stream(request).onErrorContinue((e, obj) -> {
@@ -115,6 +110,13 @@ class ChatGPTServiceImpl implements ChatGPTService {
 				return (Mono<R>) chat(request).map(ChatCompletionResponse::getReplyText);
 			}
 		};
+	}
+
+	private void buildChatCompletionRequest(ChatCompletionRequest request){
+		if (request.getModel() == null) {
+			request.setModel(model);
+		}
+		injectFunctions(request);
 	}
 
 	private void injectFunctions(ChatCompletionRequest request) {
