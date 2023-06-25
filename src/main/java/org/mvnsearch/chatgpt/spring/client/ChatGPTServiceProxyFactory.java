@@ -5,6 +5,8 @@ import org.mvnsearch.chatgpt.spring.service.PromptManager;
 
 import java.lang.reflect.Proxy;
 
+//todo  this should use Spring's ProxyFactoryBean so
+//		that the resulting proxy automatically works in AOT/GraalVM.
 public class ChatGPTServiceProxyFactory {
 
 	private final ChatGPTService chatGPTService;

@@ -2,7 +2,6 @@ package org.mvnsearch.chatgpt.demo.service;
 
 import jakarta.annotation.Nonnull;
 import org.mvnsearch.chatgpt.model.function.GPTFunction;
-import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
 import org.mvnsearch.chatgpt.model.function.Parameter;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class GPTFunctions implements GPTFunctionsStub {
+class GPTFunctions {
 
 	public record SQLQueryRequest(@Parameter(required = true, value = "SQL to query") String sql) {
 	}
