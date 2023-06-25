@@ -24,6 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Repository for all GPT callback functions.
+ *
+ * @author Josh Long
  */
 class GPTFunctionRegistry
 		implements BeanRegistrationAotProcessor, BeanPostProcessor, ApplicationListener<ApplicationReadyEvent> {
@@ -72,15 +74,29 @@ class GPTFunctionRegistry
 
 	static class GPTFunctionBeanRegistrationAotContribution implements BeanRegistrationAotContribution {
 
+		private final Class<?> beanClass;
+
 		private final Map<String, ChatGPTJavaFunction> functions;
 
-		public GPTFunctionBeanRegistrationAotContribution(Map<String, ChatGPTJavaFunction> functions) {
+		GPTFunctionBeanRegistrationAotContribution(Class<?> beanClass, Map<String, ChatGPTJavaFunction> functions) {
+			this.beanClass = beanClass;
 			this.functions = functions;
 		}
 
 		@Override
 		public void applyTo(GenerationContext generationContext, BeanRegistrationCode beanRegistrationCode) {
-
+			ReflectionHints reflection = generationContext.getRuntimeHints().reflection();
+			reflection.registerType(beanClass, MemberCategory.values());
+			GPTFunctionUtils.getAllClassesInType(beanClass)
+				.forEach(c -> reflection.registerType(c, MemberCategory.values()));
+			for (ChatGPTJavaFunction function : functions.values()) {
+				Method method = function.getJavaMethod();
+				MemberCategory[] mcs = MemberCategory.values();
+				reflection.registerType(method.getReturnType(), mcs);
+				for (Class<?> pt : method.getParameterTypes()) {
+					reflection.registerType(pt, mcs);
+				}
+			}
 		}
 
 	}
@@ -90,42 +106,15 @@ class GPTFunctionRegistry
 		Class<?> beanClass = registeredBean.getBeanClass();
 		try {
 			Map<String, ChatGPTJavaFunction> functions = GPTFunctionUtils.extractFunctions(beanClass);
-			if (!functions.isEmpty()) {
-
-				functions.forEach((functionName, function) -> log.info(
-						"Registering hints for function {} on bean {} with class {}", functionName,
-						registeredBean.getBeanName(), registeredBean.getBeanClass().getName()));
-
-				return (generationContext, beanRegistrationCode) -> {
-					ReflectionHints reflection = generationContext.getRuntimeHints().reflection();
-					reflection.registerType(beanClass, MemberCategory.values());
-					this.reflectionRegistrar.registerReflectionHints(reflection, beanClass);
-
-					for (ChatGPTJavaFunction function : functions.values()) {
-						Method method = function.getJavaMethod();
-						MemberCategory[] mcs = MemberCategory.values();
-						reflection.registerType(method.getReturnType(), mcs);
-						for (Class<?> pt : method.getParameterTypes()) {
-							reflection.registerType(pt, mcs);
-						}
-
-					}
-
-					/*
-					 * ReflectionUtils.doWithMethods(beanClass, method ->
-					 * Stream.of(method.getParameters()) .forEach(param ->
-					 * reflection.registerType(param.getType(),
-					 * MemberCategory.values())));
-					 */
-				};
-			}
+			functions.forEach(
+					(functionName, function) -> log.info("Registering hints for function {} on bean {} with class {}",
+							functionName, registeredBean.getBeanName(), registeredBean.getBeanClass().getName()));
+			return !functions.isEmpty() ? new GPTFunctionBeanRegistrationAotContribution(beanClass, functions) : null;
 		} //
 		catch (Exception e) {
 			throw new RuntimeException(
 					String.format("couldn't read the functions on bean class %s", beanClass.getName()), e);
 		}
-
-		return null;
 	}
 
 	@Override

@@ -59,8 +59,6 @@ class ChatGPTServiceAutoConfiguration {
 
 	@Bean
 	OpenAIChatAPI openAIChatAPI(ChatGPTProperties properties) throws Exception {
-		log.info("building a new OpenAIChatAPI client with key [" + properties.api().key() + "] and url ["
-				+ properties.api().url() + "]");
 		String openaiApiKey = properties.api().key();
 		String openaiApiUrl = StringUtils.hasText(properties.api().url()) ? properties.api().url()
 				: "https://api.openai.com/v1";

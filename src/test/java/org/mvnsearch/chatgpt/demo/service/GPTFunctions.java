@@ -15,8 +15,12 @@ class GPTFunctions {
 	public record SQLQueryRequest(@Parameter(required = true, value = "SQL to query") String sql) {
 	}
 
+	public record SendEmailRequest(@Nonnull @Parameter("Recipients of email") List<String> recipients,
+			@Nonnull @Parameter("Subject of email") String subject, @Parameter("Content of email") String content) {
+	}
+
 	@GPTFunction(name = "execute_sql_query", value = "Execute SQL query and return the result set")
-	public Mono<List<String>> executeSQLQuery(SQLQueryRequest request) {
+	Mono<List<String>> executeSQLQuery(SQLQueryRequest request) {
 		System.out.println("Execute SQL: " + request.sql);
 		List<String> lines = new ArrayList<>();
 		lines.add("id, name, salary");
@@ -26,12 +30,8 @@ class GPTFunctions {
 		return Mono.just(lines);
 	}
 
-	public record SendEmailRequest(@Nonnull @Parameter("Recipients of email") List<String> recipients,
-			@Nonnull @Parameter("Subject of email") String subject, @Parameter("Content of email") String content) {
-	}
-
 	@GPTFunction(name = "send_email", value = "Send email to recipients")
-	public String sendEmail(SendEmailRequest request) {
+	String sendEmail(SendEmailRequest request) {
 		System.out.println("Recipients: " + String.join(",", request.recipients));
 		System.out.println("Subject:" + request.subject);
 		System.out.println("Content:\n" + request.content);

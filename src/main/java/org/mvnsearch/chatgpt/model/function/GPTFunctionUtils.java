@@ -26,19 +26,6 @@ public class GPTFunctionUtils {
 		.configure(FAIL_ON_UNKNOWN_PROPERTIES, false)//
 		.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
-	private static Set<Class<?>> getAllClassesInType(Class<?> clazz) {
-		Set<Class<?>> all = new HashSet<>();
-		all.add(clazz);
-		all.addAll(Arrays.asList(ClassUtils.getAllInterfacesForClass(clazz)));
-		Class<?> parent;
-		Class<?> c = clazz;
-		while ((parent = c.getSuperclass()) != null && !parent.equals(Object.class)) {
-			all.add(parent);
-			c = c.getSuperclass();
-		}
-		return all;
-	}
-
 	/**
 	 * Extract GPT functions from class (and all parent classes/interfaces) by scanning
 	 * methods with {@code @GPTFunction}.
@@ -48,16 +35,18 @@ public class GPTFunctionUtils {
 	 */
 	public static Map<String, ChatGPTJavaFunction> extractFunctions(Class<?> clazz) throws Exception {
 		Map<String, ChatGPTJavaFunction> functionDeclares = new HashMap<>();
-
 		Set<Class<?>> classesToSearchForFunctions = getAllClassesInType(clazz);
+		log.debug("starting to look for functions in " + clazz.getName() + ". found " + classesToSearchForFunctions);
 
 		Set<Method> methods = classesToSearchForFunctions.stream()
 			.flatMap(cc -> Stream.of(cc.getDeclaredMethods()))
 			.filter(m -> m.getAnnotation(GPTFunction.class) != null)
 			.collect(Collectors.toSet());
 
-		if (log.isDebugEnabled() && !methods.isEmpty()) {
+		log.debug("found " + methods.size() + " methods.");
 
+		if (log.isDebugEnabled() && !methods.isEmpty()) {
+			log.debug("found " + methods.size() + " methods");
 			log.debug("======================================================================");
 			log.debug("class " + clazz.getName());
 			for (Method m : methods) {
@@ -67,7 +56,7 @@ public class GPTFunctionUtils {
 		}
 
 		for (Method method : methods) {
-			final GPTFunction gptFunctionAnnotation = method.getAnnotation(GPTFunction.class);
+			GPTFunction gptFunctionAnnotation = method.getAnnotation(GPTFunction.class);
 			if (gptFunctionAnnotation != null) {
 				String functionName = gptFunctionAnnotation.name();
 				if (functionName.isEmpty()) {
@@ -117,6 +106,20 @@ public class GPTFunctionUtils {
 			}
 		}
 		return functionDeclares;
+	}
+
+	public static Set<Class<?>> getAllClassesInType(Class<?> clazz) {
+		log.debug("finding types for " + clazz.getName());
+		Set<Class<?>> all = new HashSet<>();
+		all.add(clazz);
+		all.addAll(Arrays.asList(ClassUtils.getAllInterfacesForClass(clazz)));
+		Class<?> parent;
+		Class<?> c = clazz;
+		while ((parent = c.getSuperclass()) != null && !parent.equals(Object.class)) {
+			all.add(parent);
+			c = c.getSuperclass();
+		}
+		return all;
 	}
 
 	private static String getJsonSchemaType(Class<?> clazz) {
