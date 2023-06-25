@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.annotation.Annotation;
@@ -13,9 +14,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
@@ -23,20 +24,41 @@ public class GPTFunctionUtils {
 
 	private static final Logger log = LoggerFactory.getLogger(GPTFunctionUtils.class);
 
-	public static final ObjectMapper objectMapper = new ObjectMapper().configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+	public static final ObjectMapper objectMapper = new ObjectMapper()//
+		.configure(FAIL_ON_UNKNOWN_PROPERTIES, false)//
 		.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
 	/**
-	 * extract GPT functions from class by scanning methods with @GPTFunction
-	 * @param clazz Java Class
-	 * @return GPT functions
+	 * Extract GPT functions from class (and all parent classes/interfaces) by scanning
+	 * methods with {@code @GPTFunction}.
+	 * @param clazz the Java class whose hierarchy we need to search
+	 * @return all functions annotated with
+	 * {@code @GPTFunction the @GPTFunction annotation}
 	 */
 	public static Map<String, ChatGPTJavaFunction> extractFunctions(Class<?> clazz) throws Exception {
 		Map<String, ChatGPTJavaFunction> functionDeclares = new HashMap<>();
-		for (Method method : clazz.getDeclaredMethods()) {// support non-public callback
-															// functions
-			// check GPT function or not
-			final GPTFunction gptFunctionAnnotation = method.getAnnotation(GPTFunction.class);
+		Set<Class<?>> classesToSearchForFunctions = getAllClassesInType(clazz);
+		log.debug("starting to look for functions in " + clazz.getName() + ". found " + classesToSearchForFunctions);
+
+		Set<Method> methods = classesToSearchForFunctions.stream()
+			.flatMap(cc -> Stream.of(cc.getDeclaredMethods()))
+			.filter(m -> m.getAnnotation(GPTFunction.class) != null)
+			.collect(Collectors.toSet());
+
+		log.debug("found " + methods.size() + " methods.");
+
+		if (log.isDebugEnabled() && !methods.isEmpty()) {
+			log.debug("found " + methods.size() + " methods");
+			log.debug("======================================================================");
+			log.debug("class " + clazz.getName());
+			for (Method m : methods) {
+				log.debug("\t " + m.getReturnType().getName() + " " + m.getName() + "("
+						+ Arrays.toString(m.getParameterTypes()) + ")");
+			}
+		}
+
+		for (Method method : methods) {
+			GPTFunction gptFunctionAnnotation = method.getAnnotation(GPTFunction.class);
 			if (gptFunctionAnnotation != null) {
 				String functionName = gptFunctionAnnotation.name();
 				if (functionName.isEmpty()) {
@@ -46,11 +68,10 @@ public class GPTFunctionUtils {
 				gptJavaFunction.setJavaMethod(method);
 				gptJavaFunction.setName(functionName);
 				gptJavaFunction.setDescription(gptFunctionAnnotation.value());
-				final Class<?> requestClazz = method.getParameterTypes()[0];
+				Class<?> requestClazz = method.getParameterTypes()[0];
 				gptJavaFunction.setParameterType(requestClazz);
 				for (Field field : requestClazz.getDeclaredFields()) {
-					// parse properties
-					final Parameter functionParamAnnotation = field.getAnnotation(Parameter.class);
+					Parameter functionParamAnnotation = field.getAnnotation(Parameter.class);
 					if (functionParamAnnotation != null) {
 						String fieldName = functionParamAnnotation.name();
 						String fieldType = getJsonSchemaType(field.getType());
@@ -61,17 +82,17 @@ public class GPTFunctionUtils {
 							Class<?> actualClazz = parseArrayItemClass(field.getGenericType());
 							gptJavaFunction.addArrayProperty(fieldName, getJsonSchemaType(actualClazz),
 									functionParamAnnotation.value());
-						}
+						} //
 						else if (fieldType.equals("object")) {
 							throw new Exception(
 									"Object type not supported: " + clazz.getName() + "." + field.getName());
-						}
+						} //
 						else {
 							gptJavaFunction.addProperty(fieldName, fieldType, functionParamAnnotation.value());
 						}
 						if (functionParamAnnotation.required()) {
 							gptJavaFunction.addRequired(fieldName);
-						}
+						} //
 						else {
 							for (Annotation annotation : field.getAnnotations()) {
 								final String annotationName = annotation.annotationType().getName().toLowerCase();
@@ -87,6 +108,20 @@ public class GPTFunctionUtils {
 			}
 		}
 		return functionDeclares;
+	}
+
+	public static Set<Class<?>> getAllClassesInType(Class<?> clazz) {
+		log.debug("finding types for " + clazz.getName());
+		Set<Class<?>> all = new HashSet<>();
+		all.add(clazz);
+		all.addAll(Arrays.asList(ClassUtils.getAllInterfacesForClass(clazz)));
+		Class<?> parent;
+		Class<?> c = clazz;
+		while ((parent = c.getSuperclass()) != null && !parent.equals(Object.class)) {
+			all.add(parent);
+			c = c.getSuperclass();
+		}
+		return all;
 	}
 
 	private static String getJsonSchemaType(Class<?> clazz) {

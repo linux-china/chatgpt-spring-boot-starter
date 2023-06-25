@@ -3,7 +3,6 @@ package org.mvnsearch.chatgpt.spring.service;
 import org.mvnsearch.chatgpt.model.*;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunction;
-import org.mvnsearch.chatgpt.model.function.GPTFunctionsStub;
 import org.mvnsearch.chatgpt.model.function.Parameter;
 import org.mvnsearch.chatgpt.spring.ChatGPTProperties;
 import org.mvnsearch.chatgpt.spring.client.ChatGPTServiceProxyFactory;
@@ -26,7 +25,7 @@ import java.util.List;
 @RegisterReflectionForBinding({ Parameter.class, GPTFunction.class, ChatCompletionRequest.class,
 		ChatCompletionResponse.class, ChatCompletionChoice.class, ChatCompletionUsage.class, ChatMessage.class,
 		FunctionCall.class, ChatFunction.class, ChatFunction.Parameters.class, ChatFunction.JsonSchemaProperty.class,
-		ChatFunction.JsonArrayItems.class, GPTFunctionsStub.class, ChatGPTJavaFunction.class, })
+		ChatFunction.JsonArrayItems.class, ChatGPTJavaFunction.class, })
 @AutoConfiguration
 class ChatGPTServiceAutoConfiguration {
 
@@ -60,8 +59,6 @@ class ChatGPTServiceAutoConfiguration {
 
 	@Bean
 	OpenAIChatAPI openAIChatAPI(ChatGPTProperties properties) throws Exception {
-		log.info("building a new OpenAIChatAPI client with key [" + properties.api().key() + "] and url ["
-				+ properties.api().url() + "]");
 		String openaiApiKey = properties.api().key();
 		String openaiApiUrl = StringUtils.hasText(properties.api().url()) ? properties.api().url()
 				: "https://api.openai.com/v1";
