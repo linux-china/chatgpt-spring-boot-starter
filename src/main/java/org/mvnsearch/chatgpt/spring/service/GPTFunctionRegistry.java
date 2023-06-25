@@ -32,8 +32,6 @@ class GPTFunctionRegistry
 
 	private static final Logger log = LoggerFactory.getLogger(GPTFunctionRegistry.class);
 
-	private final BindingReflectionHintsRegistrar reflectionRegistrar = new BindingReflectionHintsRegistrar();
-
 	private final Map<String, ChatGPTJavaFunction> allJsonSchemaFunctions = new ConcurrentHashMap<>();
 
 	private final Map<String, ChatFunction> allChatFunctions = new ConcurrentHashMap<>();
