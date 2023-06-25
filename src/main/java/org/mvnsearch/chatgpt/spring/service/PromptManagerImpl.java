@@ -2,6 +2,7 @@ package org.mvnsearch.chatgpt.spring.service;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
+import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -22,7 +23,21 @@ class PromptManagerImpl implements PromptManager {
 		if (allPrompts.containsKey(key)) {
 			String prompt = allPrompts.get(key);
 			if (params != null && params.length > 0 && prompt.indexOf('{') >= 0) {
-				prompt = MessageFormat.format(prompt, params);
+				if (params.length == 1) {
+					Object obj = params[0];
+					if (obj instanceof List<?> list) { // list
+						prompt = MessageFormat.format(prompt, list.toArray());
+					}
+					else if (obj.getClass().isRecord()) { // record
+						prompt = MessageFormat.format(prompt, GPTFunctionUtils.convertRecordToArray(obj));
+					}
+					else { // object
+						prompt = MessageFormat.format(prompt, obj);
+					}
+				}
+				else {
+					prompt = MessageFormat.format(prompt, params);
+				}
 			}
 			return prompt;
 		}
