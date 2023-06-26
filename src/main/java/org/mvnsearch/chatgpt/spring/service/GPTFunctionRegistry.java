@@ -59,8 +59,9 @@ class GPTFunctionRegistry
 				for (Map.Entry<String, ChatGPTJavaFunction> entry : functions.entrySet()) {
 					ChatGPTJavaFunction jsonSchemaFunction = entry.getValue();
 					jsonSchemaFunction.setTarget(bean);
-					this.allJsonSchemaFunctions.put(entry.getKey(), jsonSchemaFunction);
-					this.allChatFunctions.put(entry.getKey(), jsonSchemaFunction.toChatFunction());
+					String functionName = entry.getKey();
+					this.allJsonSchemaFunctions.put(functionName, jsonSchemaFunction);
+					this.allChatFunctions.put(functionName, jsonSchemaFunction.toChatFunction());
 				}
 			}
 		} //
@@ -84,15 +85,14 @@ class GPTFunctionRegistry
 		@Override
 		public void applyTo(GenerationContext generationContext, BeanRegistrationCode beanRegistrationCode) {
 			ReflectionHints reflection = generationContext.getRuntimeHints().reflection();
-			reflection.registerType(beanClass, MemberCategory.values());
-			GPTFunctionUtils.getAllClassesInType(beanClass)
-				.forEach(c -> reflection.registerType(c, MemberCategory.values()));
+			MemberCategory[] memberCategories = MemberCategory.values();
+			reflection.registerType(beanClass, memberCategories);
+			GPTFunctionUtils.getAllClassesInType(beanClass).forEach(c -> reflection.registerType(c, memberCategories));
 			for (ChatGPTJavaFunction function : functions.values()) {
 				Method method = function.getJavaMethod();
-				MemberCategory[] mcs = MemberCategory.values();
-				reflection.registerType(method.getReturnType(), mcs);
+				reflection.registerType(method.getReturnType(), memberCategories);
 				for (Class<?> pt : method.getParameterTypes()) {
-					reflection.registerType(pt, mcs);
+					reflection.registerType(pt, memberCategories);
 				}
 			}
 		}
