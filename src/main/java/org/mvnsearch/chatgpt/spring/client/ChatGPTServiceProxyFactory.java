@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aot.generate.GenerationContext;
+import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.ProxyHints;
+import org.springframework.aot.hint.ReflectionHints;
 import org.springframework.beans.factory.aot.BeanRegistrationAotContribution;
 import org.springframework.beans.factory.aot.BeanRegistrationAotProcessor;
 import org.springframework.beans.factory.aot.BeanRegistrationCode;
@@ -23,7 +25,11 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class ChatGPTServiceProxyFactory {
 
@@ -165,18 +171,21 @@ class GPTExchangeBeanRegistrationAotProcessor implements BeanRegistrationAotProc
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
+	private final static MergedAnnotations.Search SEARCH = MergedAnnotations
+		.search(MergedAnnotations.SearchStrategy.TYPE_HIERARCHY);
+
 	@Nullable
 	public BeanRegistrationAotContribution processAheadOfTime(RegisteredBean registeredBean) {
 		Class<?> beanClass = registeredBean.getBeanClass();
 		List<Class<?>> exchangeInterfaces = new ArrayList<>();
-		MergedAnnotations.Search search = MergedAnnotations.search(MergedAnnotations.SearchStrategy.TYPE_HIERARCHY);
+
 		Class<?>[] interfaces = ClassUtils.getAllInterfacesForClass(beanClass);
 		if (log.isDebugEnabled())
 			log.debug("GPTExchange interfaces: {}", Arrays.toString(interfaces));
 		for (Class<?> interfaceClass : interfaces) {
 			ReflectionUtils.doWithMethods(interfaceClass, (method) -> {
 				if (!exchangeInterfaces.contains(interfaceClass)
-						&& search.from(method).isPresent(ChatCompletion.class)) {
+						&& SEARCH.from(method).isPresent(ChatCompletion.class)) {
 					exchangeInterfaces.add(interfaceClass);
 					if (log.isDebugEnabled()) {
 						log.debug("adding {} to the collection of GPTExchange interfaces", interfaceClass.getName());
@@ -189,7 +198,7 @@ class GPTExchangeBeanRegistrationAotProcessor implements BeanRegistrationAotProc
 				: null;
 	}
 
-	static class HttpExchangeBeanRegistrationAotContribution implements BeanRegistrationAotContribution {
+	private static class HttpExchangeBeanRegistrationAotContribution implements BeanRegistrationAotContribution {
 
 		private final List<Class<?>> httpExchangeInterfaces;
 
@@ -199,9 +208,16 @@ class GPTExchangeBeanRegistrationAotProcessor implements BeanRegistrationAotProc
 
 		public void applyTo(GenerationContext generationContext, BeanRegistrationCode beanRegistrationCode) {
 			ProxyHints proxyHints = generationContext.getRuntimeHints().proxies();
+			ReflectionHints reflectionHints = generationContext.getRuntimeHints().reflection();
 			for (Class<?> exchangeInterface : this.httpExchangeInterfaces) {
-				proxyHints
-					.registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(new Class[] { exchangeInterface }));
+				proxyHints.registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(exchangeInterface));
+				ReflectionUtils.doWithMethods(exchangeInterface, method -> {
+					if (SEARCH.from(method).isPresent(ChatCompletion.class)) {
+						Stream.of(method.getParameterTypes())
+							.forEach(c -> reflectionHints.registerType(c, MemberCategory.values()));
+					}
+				});
+
 			}
 
 		}
