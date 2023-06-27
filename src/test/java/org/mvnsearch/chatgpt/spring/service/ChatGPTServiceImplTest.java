@@ -31,7 +31,7 @@ class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 	@Test
 	void testExecuteSQLQuery() throws Exception {
 		String prompt = "Query all employees whose salary is greater than the average.";
-		ChatCompletionRequest request = ChatRequestBuilder.of(promptManager.prompt("sql-developer", prompt))
+		ChatCompletionRequest request = ChatRequestBuilder.of(promptManager.prompt("sql-writer", prompt))
 			.function("execute_sql_query")
 			.build();
 		String result = chatGPTService.chat(request).flatMap(ChatCompletionResponse::getReplyCombinedText).block();
@@ -79,7 +79,7 @@ class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 
 	@Test
 	void testLambdaWithFunctionResult() {
-		Function<String, Mono<List<String>>> executeSqlQuery = chatGPTService.promptAsLambda("sql-developer",
+		Function<String, Mono<List<String>>> executeSqlQuery = chatGPTService.promptAsLambda("sql-writer",
 				"execute_sql_query");
 		List<String> result = Mono.just("Query all employees whose salary is greater than the average.")
 			.flatMap(executeSqlQuery)
