@@ -194,22 +194,22 @@ class GPTExchangeBeanRegistrationAotProcessor implements BeanRegistrationAotProc
 			});
 		}
 
-		return !exchangeInterfaces.isEmpty() ? new HttpExchangeBeanRegistrationAotContribution(exchangeInterfaces)
+		return !exchangeInterfaces.isEmpty() ? new GptExchangeBeanRegistrationAotContribution(exchangeInterfaces)
 				: null;
 	}
 
-	private static class HttpExchangeBeanRegistrationAotContribution implements BeanRegistrationAotContribution {
+	private static class GptExchangeBeanRegistrationAotContribution implements BeanRegistrationAotContribution {
 
-		private final List<Class<?>> httpExchangeInterfaces;
+		private final List<Class<?>> gptExchangeInterfaces;
 
-		HttpExchangeBeanRegistrationAotContribution(List<Class<?>> httpExchangeInterfaces) {
-			this.httpExchangeInterfaces = httpExchangeInterfaces;
+		GptExchangeBeanRegistrationAotContribution(List<Class<?>> gptExchangeInterfaces) {
+			this.gptExchangeInterfaces = gptExchangeInterfaces;
 		}
 
 		public void applyTo(GenerationContext generationContext, BeanRegistrationCode beanRegistrationCode) {
 			ProxyHints proxyHints = generationContext.getRuntimeHints().proxies();
 			ReflectionHints reflectionHints = generationContext.getRuntimeHints().reflection();
-			for (Class<?> exchangeInterface : this.httpExchangeInterfaces) {
+			for (Class<?> exchangeInterface : this.gptExchangeInterfaces) {
 				proxyHints.registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(exchangeInterface));
 				ReflectionUtils.doWithMethods(exchangeInterface, method -> {
 					if (SEARCH.from(method).isPresent(ChatCompletion.class)) {
