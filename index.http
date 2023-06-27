@@ -69,7 +69,7 @@ Content-Type: application/json
   "messages": [
     {
       "role": "system",
-      "content": "You are SQL developer. Write SQL according to requirements, and execute it in MySQL database."
+      "content": "You are a helpful SQL writer with MySQL dialect."
     },
     {
       "role": "user",
