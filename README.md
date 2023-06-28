@@ -1,3 +1,5 @@
+[![Project Map](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/linuxchinachatgptspringbootstarter/)
+
 ChatGPT Spring Boot Starter
 ===========================
 
