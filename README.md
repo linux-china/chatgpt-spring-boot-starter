@@ -1,4 +1,15 @@
-[![Project Map](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/linuxchinachatgptspringbootstarter/)
+<p align="center">
+  <a href="https://repo1.maven.org/maven2/com/alibaba/rsocket/">
+    <img alt="Maven" src="https://img.shields.io/maven-central/v/org.mvnsearch/chatgpt-spring-boot-starter"></a>
+  <a href="https://github.com/linux-china/chatgpt-spring-boot-starter">
+    <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/linux-china/chatgpt-spring-boot-starter"></a>
+  <a href="https://github.com/linux-china/chatgpt-spring-boot-starter/issues">
+    <img alt = "Open Issues" src="https://img.shields.io/github/issues-raw/linux-china/chatgpt-spring-boot-starter.svg"></a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">
+    <img alt = "Apache License 2" src="https://img.shields.io/badge/license-ASF2-blue.svg"></a>
+  <a href="https://sourcespy.com/github/linuxchinachatgptspringbootstarter/">
+    <img alt="" src="https://sourcespy.com/shield.svg"></a>
+</p>
 
 ChatGPT Spring Boot Starter
 ===========================
