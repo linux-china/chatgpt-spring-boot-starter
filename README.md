@@ -101,7 +101,7 @@ Create ChatGPT interface service bean:
 
 # ChatGPT functions
 
-* Create a Spring Bean with `@Component` and implement `GPTFunctionsStub` interface. Annotate GPT functions
+* Create a Spring Bean with `@Component`. Annotate GPT functions
   with `@GPTFunction` annotation, and annotate function parameters with `@Parameter` annotation.  `@Nonnull` means that
   the parameter is required.
 
@@ -110,7 +110,7 @@ Create ChatGPT interface service bean:
 import jakarta.annotation.Nonnull;
 
 @Component
-public class GPTFunctions implements GPTFunctionsStub {
+public class GPTFunctions {
 
     public record SendEmailRequest(
             @Nonnull @Parameter("Recipients of email") List<String> recipients,
