@@ -95,3 +95,40 @@ Content-Type: application/json
     }
   ]
 }
+
+### ChatGPT function call to simulate smart speaker
+POST https://api.openai.com/v1/chat/completions
+Authorization: Bearer {{OPENAI_API_KEY}}
+Content-Type: application/json
+
+{
+  "model": "gpt-3.5-turbo-0613",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a smart speaker, and your name is Alexa. You can play music songs, answer questions and so on."
+    },
+    {
+      "role": "user",
+      "content": "Alexa, please play Hotel California."
+    }
+  ],
+  "functions": [
+    {
+      "name": "play_songs",
+      "description": "Play music songs",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Song's name, singer's name, playlist's name or station's name"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  ]
+}
