@@ -38,4 +38,14 @@ class GPTFunctions {
 		return "Email sent to " + String.join(",", request.recipients) + " successfully!";
 	}
 
+	public record PlaySongsRequest(
+			@Nonnull @Parameter("Song's name, singer's name, playlist's name or station's name") String name) {
+
+	}
+
+	@GPTFunction(name = "play_songs", value = "Play music songs")
+	String playSongs(PlaySongsRequest request) {
+		return "Songs: " + request.name() + " played successfully!";
+	}
+
 }
