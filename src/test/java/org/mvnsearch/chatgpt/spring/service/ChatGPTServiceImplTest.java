@@ -55,6 +55,15 @@ class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 	}
 
 	@Test
+	void testSmartSpeaker() throws Exception {
+		String prompt = "You are a smart speaker, and your name is Alexa. You can play music songs, answer questions and so on. \nAlexa, please play Hotel California.";
+		ChatCompletionRequest request = ChatRequestBuilder.of(prompt).function("play_songs").build();
+		ChatCompletionResponse response = chatGPTService.chat(request).block();
+		// display reply combined text with function call
+		System.out.println(response.getReplyCombinedText().block());
+	}
+
+	@Test
 	void testPromptAsFunction() {
 		Function<String, Mono<String>> translateIntoChineseFunction = chatGPTService
 			.promptAsLambda("translate-into-chinese");
