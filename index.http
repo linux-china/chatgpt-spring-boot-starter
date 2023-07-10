@@ -11,8 +11,7 @@ Content-Type: application/json
 
 {
   "model": "text-davinci-003",
-  "prompt": "Say this is a test",
-  "max_tokens": 7,
+  "prompt": "床前明月光",
   "temperature": 0
 }
 
