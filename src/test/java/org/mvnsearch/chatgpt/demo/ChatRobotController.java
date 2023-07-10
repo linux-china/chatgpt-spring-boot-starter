@@ -1,7 +1,7 @@
 package org.mvnsearch.chatgpt.demo;
 
-import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
-import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionRequest;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionResponse;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
