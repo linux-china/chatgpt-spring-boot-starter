@@ -1,6 +1,7 @@
 package org.mvnsearch.chatgpt.demo.service;
 
 import org.mvnsearch.chatgpt.model.ChatCompletion;
+import org.mvnsearch.chatgpt.model.Completion;
 import org.mvnsearch.chatgpt.model.GPTExchange;
 import reactor.core.publisher.Mono;
 
@@ -15,6 +16,9 @@ public interface GPTHelloService {
 
 	@ChatCompletion("You are a language translator, please translate the below text from {0} to {1}.\n {2}")
 	Mono<String> translate(String sourceLanguage, String targetLanguage, String text);
+
+	@Completion("please complete poem: {0}")
+	Mono<String> completePoem(String text);
 
 	record TranslateRequest(String sourceLanguage, String targetLanguage, String text) {
 	}
