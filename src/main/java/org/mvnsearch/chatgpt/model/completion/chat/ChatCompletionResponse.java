@@ -1,6 +1,7 @@
-package org.mvnsearch.chatgpt.model;
+package org.mvnsearch.chatgpt.model.completion.chat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.mvnsearch.chatgpt.model.CompletionUsage;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,7 +20,7 @@ public class ChatCompletionResponse {
 
 	private String object;
 
-	private ChatCompletionUsage usage;
+	private CompletionUsage usage;
 
 	private List<ChatCompletionChoice> choices;
 
@@ -31,11 +32,11 @@ public class ChatCompletionResponse {
 		this.id = id;
 	}
 
-	public ChatCompletionUsage getUsage() {
+	public CompletionUsage getUsage() {
 		return usage;
 	}
 
-	public void setUsage(ChatCompletionUsage usage) {
+	public void setUsage(CompletionUsage usage) {
 		this.usage = usage;
 	}
 

@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.model;
+package org.mvnsearch.chatgpt.model.completion.chat;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.model;
+package org.mvnsearch.chatgpt.model.completion.chat;
 
 import java.util.ArrayList;
 import java.util.HashMap;

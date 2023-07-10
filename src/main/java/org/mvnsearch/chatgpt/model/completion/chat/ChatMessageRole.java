@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.model;
+package org.mvnsearch.chatgpt.model.completion.chat;
 
 public enum ChatMessageRole {
 
