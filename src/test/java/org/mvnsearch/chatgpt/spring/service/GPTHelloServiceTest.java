@@ -15,9 +15,17 @@ class GPTHelloServiceTest extends ProjectBootBaseTest {
 
 	@Test
 	void testTranslateIntoChinese() {
-		StepVerifier.create(helloService.translateIntoChinese("Hello").map(result -> result.length() > 0))
+		StepVerifier.create(helloService.translateIntoChinese("Hello").map(result -> !result.isEmpty()))
 			.expectNext(true)
 			.verifyComplete();
+	}
+
+	@Test
+	public void testCompletePoem() {
+		StepVerifier.create(helloService.completePoem("春眠不觉晓，")).expectNextMatches(result -> {
+			System.out.println(result);
+			return !result.isEmpty();
+		}).verifyComplete();
 	}
 
 	@Test
