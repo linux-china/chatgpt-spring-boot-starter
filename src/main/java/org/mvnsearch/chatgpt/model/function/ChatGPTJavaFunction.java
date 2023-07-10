@@ -2,7 +2,7 @@ package org.mvnsearch.chatgpt.model.function;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.mvnsearch.chatgpt.model.ChatFunction;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatFunction;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
