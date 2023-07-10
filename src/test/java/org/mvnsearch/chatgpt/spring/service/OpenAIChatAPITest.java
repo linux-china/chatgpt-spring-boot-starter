@@ -1,8 +1,8 @@
 package org.mvnsearch.chatgpt.spring.service;
 
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
-import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
-import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionRequest;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
