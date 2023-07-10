@@ -1,7 +1,11 @@
 package org.mvnsearch.chatgpt.spring.service;
 
 import org.jetbrains.annotations.PropertyKey;
-import org.mvnsearch.chatgpt.model.*;
+import org.mvnsearch.chatgpt.model.completion.chat.*;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionRequest;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionResponse;
+import org.mvnsearch.chatgpt.model.embedding.EmbeddingsRequest;
+import org.mvnsearch.chatgpt.model.embedding.EmbeddingsResponse;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.spring.constants.ChatGPTConstants;
 import reactor.core.publisher.Flux;
@@ -69,6 +73,16 @@ class ChatGPTServiceImpl implements ChatGPTService {
 				}
 			});
 		}
+	}
+
+	@Override
+	public Mono<EmbeddingsResponse> embed(EmbeddingsRequest request) {
+		return this.openAIChatAPI.embeddings(request);
+	}
+
+	@Override
+	public Mono<CompletionResponse> complete(CompletionRequest request) {
+		return this.openAIChatAPI.complete(request);
 	}
 
 	@Override
