@@ -2,9 +2,13 @@ package org.mvnsearch.chatgpt.spring.service;
 
 import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
-import org.mvnsearch.chatgpt.model.ChatCompletionRequest;
-import org.mvnsearch.chatgpt.model.ChatCompletionResponse;
-import org.mvnsearch.chatgpt.model.ChatRequestBuilder;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionRequest;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionResponse;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatRequestBuilder;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionRequest;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionResponse;
+import org.mvnsearch.chatgpt.model.embedding.EmbeddingsRequest;
+import org.mvnsearch.chatgpt.model.embedding.EmbeddingsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 
@@ -25,6 +29,22 @@ class ChatGPTServiceImplTest extends ProjectBootBaseTest {
 	void testSimpleChat() {
 		ChatCompletionRequest request = ChatCompletionRequest.of("What's Java Language?");
 		ChatCompletionResponse response = chatGPTService.chat(request).block();
+		System.out.println(response.getReplyText());
+	}
+
+	@Test
+	public void testEmbed() {
+		final EmbeddingsResponse response = chatGPTService.embed(EmbeddingsRequest.of("Hello World")).block();
+		assertThat(response).isNotNull();
+		assertThat(response.getEmbeddings()).isNotEmpty();
+		System.out.println(response.getEmbeddings());
+	}
+
+	@Test
+	public void testComplete() {
+		final CompletionResponse response = chatGPTService.complete(new CompletionRequest("text-davinci-003", "床前明月光"))
+			.block();
+		assertThat(response).isNotNull();
 		System.out.println(response.getReplyText());
 	}
 
