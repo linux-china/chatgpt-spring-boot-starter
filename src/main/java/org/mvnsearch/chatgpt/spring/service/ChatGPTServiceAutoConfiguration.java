@@ -1,6 +1,11 @@
 package org.mvnsearch.chatgpt.spring.service;
 
-import org.mvnsearch.chatgpt.model.*;
+import org.mvnsearch.chatgpt.model.CompletionUsage;
+import org.mvnsearch.chatgpt.model.completion.chat.*;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionRequest;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionResponse;
+import org.mvnsearch.chatgpt.model.embedding.EmbeddingsRequest;
+import org.mvnsearch.chatgpt.model.embedding.EmbeddingsResponse;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunction;
 import org.mvnsearch.chatgpt.model.function.Parameter;
@@ -23,9 +28,10 @@ import java.net.URL;
 import java.util.List;
 
 @RegisterReflectionForBinding({ Parameter.class, GPTFunction.class, ChatCompletionRequest.class,
-		ChatCompletionResponse.class, ChatCompletionChoice.class, ChatCompletionUsage.class, ChatMessage.class,
+		ChatCompletionResponse.class, ChatCompletionChoice.class, CompletionUsage.class, ChatMessage.class,
 		FunctionCall.class, ChatFunction.class, ChatFunction.Parameters.class, ChatFunction.JsonSchemaProperty.class,
-		ChatFunction.JsonArrayItems.class, ChatGPTJavaFunction.class, })
+		ChatFunction.JsonArrayItems.class, ChatGPTJavaFunction.class, EmbeddingsRequest.class, EmbeddingsResponse.class,
+		CompletionRequest.class, CompletionRequest.class, CompletionResponse.class })
 @AutoConfiguration
 class ChatGPTServiceAutoConfiguration {
 
