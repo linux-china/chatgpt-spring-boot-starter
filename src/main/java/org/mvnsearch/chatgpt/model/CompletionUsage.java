@@ -2,7 +2,7 @@ package org.mvnsearch.chatgpt.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ChatCompletionUsage {
+public class CompletionUsage {
 
 	@JsonProperty("prompt_tokens")
 	private Integer promptTokens;
