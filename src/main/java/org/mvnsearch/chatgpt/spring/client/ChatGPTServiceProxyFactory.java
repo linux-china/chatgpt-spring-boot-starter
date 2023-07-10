@@ -2,10 +2,14 @@ package org.mvnsearch.chatgpt.spring.client;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.mvnsearch.chatgpt.model.*;
+import org.mvnsearch.chatgpt.model.ChatCompletion;
+import org.mvnsearch.chatgpt.model.Completion;
+import org.mvnsearch.chatgpt.model.GPTExchange;
 import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionRequest;
 import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionResponse;
 import org.mvnsearch.chatgpt.model.completion.chat.ChatMessage;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionRequest;
+import org.mvnsearch.chatgpt.model.completion.completion.CompletionResponse;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import org.mvnsearch.chatgpt.spring.service.ChatGPTService;
 import org.mvnsearch.chatgpt.spring.service.PromptManager;
@@ -97,7 +101,18 @@ class GPTExchangeMethodInterceptor implements MethodInterceptor {
 		List<ChatMessage> messages = new ArrayList<>();
 		String[] functions = null;
 		final ChatCompletion chatCompletionAnnotation = method.getAnnotation(ChatCompletion.class);
-		if (chatCompletionAnnotation != null) {
+		final Completion completionAnnotation = method.getAnnotation(Completion.class);
+		if (completionAnnotation != null) { // completion
+			CompletionRequest request = new CompletionRequest();
+			request.setModel(completionAnnotation.model());
+			String prompt = (String) args[0];
+			if (!completionAnnotation.value().isEmpty()) {
+				prompt = completionAnnotation.value() + prompt;
+			}
+			request.setPrompt(prompt);
+			return chatGPTService.complete(request).map(CompletionResponse::getReplyText);
+		}
+		else if (chatCompletionAnnotation != null) { // chat completion
 			functions = chatCompletionAnnotation.functions();
 			// user message
 			String userMessage = chatCompletionAnnotation.value();
