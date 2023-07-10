@@ -1,4 +1,4 @@
-package org.mvnsearch.chatgpt.model;
+package org.mvnsearch.chatgpt.model.completion.chat;
 
 import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
