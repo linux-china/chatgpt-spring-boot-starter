@@ -41,7 +41,7 @@ Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
 <dependency>
     <groupId>org.mvnsearch</groupId>
     <artifactId>chatgpt-spring-boot-starter</artifactId>
-    <version>0.5.1</version>
+    <version>0.6.0</version>
 </dependency>
 ```
 
@@ -100,6 +100,10 @@ public interface GPTHelloService {
 
     @ChatCompletion("You are a language translator, please translate the below text from {0} to {1}.\n {2}")
     Mono<String> translate(String sourceLanguage, String targetLanguage, String text);
+  
+    @Completion("please complete poem: {0}")
+  	Mono<String> completePoem(String text);
+    
 }
 ```
 
