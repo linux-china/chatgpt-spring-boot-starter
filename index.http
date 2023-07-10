@@ -4,6 +4,19 @@ Content-Type: text/plain
 
 What's Java?
 
+### complete
+POST https://api.openai.com/v1/completions
+Authorization: Bearer {{OPENAI_API_KEY}}
+Content-Type: application/json
+
+{
+  "model": "text-davinci-003",
+  "prompt": "Say this is a test",
+  "max_tokens": 7,
+  "temperature": 0
+}
+
+
 ### ChatGPT with context information: 
 POST https://api.openai.com/v1/chat/completions
 Authorization: Bearer {{OPENAI_API_KEY}}
