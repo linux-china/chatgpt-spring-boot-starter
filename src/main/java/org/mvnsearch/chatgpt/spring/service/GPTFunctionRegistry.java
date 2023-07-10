@@ -1,12 +1,11 @@
 package org.mvnsearch.chatgpt.spring.service;
 
-import org.mvnsearch.chatgpt.model.ChatFunction;
+import org.mvnsearch.chatgpt.model.completion.chat.ChatFunction;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aot.generate.GenerationContext;
-import org.springframework.aot.hint.BindingReflectionHintsRegistrar;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.ReflectionHints;
 import org.springframework.beans.BeansException;
