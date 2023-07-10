@@ -77,7 +77,7 @@ class ChatGPTServiceImpl implements ChatGPTService {
 
 	@Override
 	public Mono<EmbeddingsResponse> embed(EmbeddingsRequest request) {
-		return this.openAIChatAPI.embeddings(request);
+		return this.openAIChatAPI.embed(request);
 	}
 
 	@Override
