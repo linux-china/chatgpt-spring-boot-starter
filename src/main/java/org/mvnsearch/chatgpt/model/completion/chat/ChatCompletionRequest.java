@@ -200,8 +200,8 @@ public class ChatCompletionRequest {
 	public void updateModelWithFunctionSupport() {
 		// Snapshot of gpt-3.5-turbo from June 13th 2023 with function support
 		if (this.functionNames != null || this.functions != null) {
-			if (!this.model.endsWith("-0613")) {
-				this.model = this.model + "-0613";
+			if (!(this.model.contains("-0613") || this.model.contains("-1106"))) {
+				this.model = this.model + "-1106";
 			}
 		}
 	}
