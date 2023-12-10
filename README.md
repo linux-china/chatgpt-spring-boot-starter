@@ -283,14 +283,13 @@ Of course, you can use standard URL `http://localhost:8080/v1/chat/completions` 
 
 Now ChatGPT starter use Reactive style API, and you know Reactive still hard to understand.
 Could ChatGPT starter work with Spring Web? Yes, you can use `Mono` or `Flux` with Spring Web and Virtual Threads,
-please refer [Spring Boot Virtual Thread Demo](https://github.com/linux-china/spring-boot-virtual-thread-demo#async-method-on-virtual-threads) for details.
-
+please refer [Support for Virtual Threads on Spring Boot 3.2](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes#support-for-virtual-threads) for details.
 
 # Building the Code 
 
 The code uses the Spring Java Formatter Maven plugin, which keeps the code consistent. In order to build the code, run:
 
-```shell 
+```shell {#javaformat} 
 ./mvnw spring-javaformat:apply
 ```
 
