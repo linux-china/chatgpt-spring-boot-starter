@@ -298,8 +298,9 @@ This will ensure that all contributions have the exact same code formatting, all
 # References
 
 * [OpenAI chat API](https://platform.openai.com/docs/api-reference/chat)
-* [Spring Boot 3.0+](https://docs.spring.io/spring-boot/docs/current/reference/html/)
+* [Spring Boot Docs](https://docs.spring.io/spring-boot/docs/current/reference/html/)
 * [Spring Boot Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)
 * [Spring 6 HTTP interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface)
 * [Properties File Format](https://docs.oracle.com/cd/E23095_01/Platform.93/ATGProgGuide/html/s0204propertiesfileformat01.html)
 * [MessageFormat JavaDoc](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/MessageFormat.html)
+* [OpenAI Prompt engineering](https://platform.openai.com/docs/guides/prompt-engineering)
