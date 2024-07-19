@@ -56,7 +56,7 @@ api-key: {{AZURE_OPENAI_KEY}}
 Content-Type: application/json
 
 {
-  "model": "gpt-35-turbo-0301",
+  "model": "gpt-35-turbo",
   "messages": [
     {
       "role": "system",
