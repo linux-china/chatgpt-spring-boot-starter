@@ -120,7 +120,7 @@ public class ChatCompletionResponse {
 		if (isEmpty())
 			return Mono.empty();
 		return Flux.fromIterable(choices)
-			.filter(choice -> choice.getMessage() != null && choice.getMessage().getFunctionCall() != null)
+			.filter(choice -> choice.getMessage() != null && choice.getMessage().getToolCalls() != null)
 			.last()
 			.flatMap(choice -> choice.getMessage().getFunctionResult());
 	}

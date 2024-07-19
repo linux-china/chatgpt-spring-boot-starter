@@ -44,7 +44,7 @@ public class ChatCompletionRequest {
 	/**
 	 * functions with json array
 	 */
-	private List<ChatFunction> functions;
+	private List<ChatTool> tools;
 
 	@JsonIgnore
 	private List<String> functionNames;
@@ -151,12 +151,12 @@ public class ChatCompletionRequest {
 		this.user = user;
 	}
 
-	public List<ChatFunction> getFunctions() {
-		return functions;
+	public List<ChatTool> getTools() {
+		return tools;
 	}
 
-	public void setFunctions(List<ChatFunction> functions) {
-		this.functions = functions;
+	public void setTools(List<ChatTool> tools) {
+		this.tools = tools;
 	}
 
 	public Object getFunctionCall() {
@@ -191,10 +191,10 @@ public class ChatCompletionRequest {
 	}
 
 	public void addFunction(ChatFunction function) {
-		if (this.functions == null) {
-			this.functions = new ArrayList<>();
+		if (this.tools == null) {
+			this.tools = new ArrayList<>();
 		}
-		this.functions.add(function);
+		this.tools.add(new ChatTool(function));
 	}
 
 	public static ChatCompletionRequest of(@Nonnull String userMessage) {
