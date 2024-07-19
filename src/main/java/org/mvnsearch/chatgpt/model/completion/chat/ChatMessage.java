@@ -8,6 +8,7 @@ import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatMessage {
@@ -63,6 +64,17 @@ public class ChatMessage {
 
     public void setToolCalls(List<ToolCall> toolCalls) {
         this.toolCalls = toolCalls;
+    }
+
+    public FunctionCall findFunctionCall() {
+        if (toolCalls != null && !toolCalls.isEmpty()) {
+            for (ToolCall toolCall : toolCalls) {
+                if (Objects.equals(toolCall.getType(), "function")) {
+                    return toolCall.getFunction();
+                }
+            }
+        }
+        return null;
     }
 
     @JsonIgnore
