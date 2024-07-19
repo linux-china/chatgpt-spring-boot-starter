@@ -13,6 +13,6 @@ public @interface Completion {
 	 */
 	String value() default "";
 
-	String model() default "text-davinci-003";
+	String model() default "gpt-3.5-turbo-instruct";
 
 }
