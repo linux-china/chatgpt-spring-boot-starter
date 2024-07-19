@@ -123,7 +123,6 @@ class ChatGPTServiceImpl implements ChatGPTService {
 				}
 			}
 		}
-		request.updateModelWithFunctionSupport();
 	}
 
 	private void injectFunctionCallLambda(ChatMessage chatMessage) {
