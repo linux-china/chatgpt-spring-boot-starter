@@ -10,7 +10,7 @@ Authorization: Bearer {{OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
-  "model": "text-davinci-003",
+  "model": "gpt-3.5-turbo-instruct",
   "prompt": "床前明月光",
   "temperature": 0
 }
@@ -22,7 +22,7 @@ Authorization: Bearer {{OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
-  "model": "gpt-3.5-turbo",
+  "model": "gpt-4o-mini",
   "messages": [
     {
       "role": "user",
@@ -37,7 +37,7 @@ Authorization: Bearer {{OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
-  "model": "gpt-3.5-turbo",
+  "model": "gpt-4o-mini",
   "messages": [
     {
       "role": "system",
@@ -75,8 +75,8 @@ Authorization: Bearer {{OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
-  "model": "gpt-3.5-turbo",
-  "stream": true,
+  "model": "gpt-4o-mini",
+  "stream": false,
   "messages": [
     {
       "role": "user",
@@ -92,7 +92,7 @@ Authorization: Bearer {{OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
-  "model": "gpt-3.5-turbo-0613",
+  "model": "gpt-4o-mini",
   "messages": [
     {
       "role": "system",
@@ -129,7 +129,7 @@ Authorization: Bearer {{OPENAI_API_KEY}}
 Content-Type: application/json
 
 {
-  "model": "gpt-3.5-turbo-0613",
+  "model": "gpt-4o-mini",
   "messages": [
     {
       "role": "system",
