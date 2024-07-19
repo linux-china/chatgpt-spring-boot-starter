@@ -19,7 +19,7 @@ class GPTFunctions {
 			@Nonnull @Parameter("Subject of email") String subject, @Parameter("Content of email") String content) {
 	}
 
-	@GPTFunction(name = "execute_sql_query", value = "Execute SQL query and return the result set")
+	@GPTFunction(name = "execute_sql_query", value = "Execute SQL and return the result set")
 	Mono<List<String>> executeSQLQuery(SQLQueryRequest request) {
 		System.out.println("Execute SQL: " + request.sql);
 		List<String> lines = new ArrayList<>();
