@@ -103,21 +103,24 @@ Content-Type: application/json
       "content": "Query all employees whose salary is greater than the average."
     }
   ],
-  "functions": [
+  "tools": [
     {
-      "name": "execute_sql_query",
-      "description": "Execute SQL and return the result set",
-      "parameters": {
-        "type": "object",
-        "properties": {
-          "sql": {
-            "type": "string",
-            "description": "SQL to query"
-          }
-        },
-        "required": [
-          "sql"
-        ]
+      "type": "function",
+      "function": {
+        "name": "execute_sql_query",
+        "description": "Execute SQL and return the result set",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "sql": {
+              "type": "string",
+              "description": "SQL to query"
+            }
+          },
+          "required": [
+            "sql"
+          ]
+        }
       }
     }
   ]
