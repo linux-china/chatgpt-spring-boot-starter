@@ -1,30 +1,32 @@
 package org.mvnsearch.chatgpt.model.completion.chat;
 
-
 public class ChatTool {
-    private String type = "function";
-    private ChatFunction function;
 
-    public ChatTool() {
-    }
+	private String type = "function";
 
-    public ChatTool(ChatFunction function) {
-        this.function = function;
-    }
+	private ChatFunction function;
 
-    public String getType() {
-        return type;
-    }
+	public ChatTool() {
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public ChatTool(ChatFunction function) {
+		this.function = function;
+	}
 
-    public ChatFunction getFunction() {
-        return function;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setFunction(ChatFunction function) {
-        this.function = function;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public ChatFunction getFunction() {
+		return function;
+	}
+
+	public void setFunction(ChatFunction function) {
+		this.function = function;
+	}
+
 }
