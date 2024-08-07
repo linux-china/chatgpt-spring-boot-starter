@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.mvnsearch</groupId>
     <artifactId>chatgpt-spring-boot-starter</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
     <name>chatgpt-spring-boot-starter</name>
     <description>Spring Boot ChatGPT Starter</description>
     <url>https://github.com/linux-china/chatgpt-spring-boot-starter</url>
