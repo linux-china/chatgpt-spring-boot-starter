@@ -16,7 +16,7 @@ public class ChatMessage {
 	private ChatMessageRole role;
 
 	private String content;
-	
+
 	private String refusal;
 
 	/**

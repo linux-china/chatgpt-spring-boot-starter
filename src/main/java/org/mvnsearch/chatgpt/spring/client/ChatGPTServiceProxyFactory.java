@@ -50,7 +50,6 @@ public class ChatGPTServiceProxyFactory {
 		this.promptManager = promptManager;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> T createClient(Class<T> clazz) {
 		return ProxyFactory.getProxy(clazz,
 				new GPTExchangeMethodInterceptor(this.chatGPTService, this.promptManager, clazz));

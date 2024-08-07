@@ -109,15 +109,15 @@ public class GPTFunctionUtils {
 				if (fieldType.equals("array")) {
 					Class<?> actualClazz = parseArrayItemClass(field.getGenericType());
 					parameters.getProperties()
-						.put(fieldName,
-								new Parameters.JsonSchemaProperty(fieldName, "array", fieldDescription,
-										new Parameters.JsonArrayItems(getJsonSchemaType(actualClazz), null)));
+						.put(fieldName, new Parameters.JsonSchemaProperty(fieldName, "array", fieldDescription,
+								new Parameters.JsonArrayItems(getJsonSchemaType(actualClazz), null)));
 				} //
 				else if (fieldType.equals("object")) {
 					throw new Exception("Object type not supported: " + clazz.getName() + "." + field.getName());
 				} //
 				else {
-					parameters.getProperties().put(fieldName, new Parameters.JsonSchemaProperty(fieldName, fieldType, fieldDescription));
+					parameters.getProperties()
+						.put(fieldName, new Parameters.JsonSchemaProperty(fieldName, fieldType, fieldDescription));
 				}
 				if (functionParamAnnotation.required()) {
 					parameters.getRequired().add(fieldName);

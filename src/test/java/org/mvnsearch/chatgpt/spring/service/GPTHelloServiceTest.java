@@ -52,7 +52,6 @@ class GPTHelloServiceTest extends ProjectBootBaseTest {
 			.verifyComplete();
 	}
 
-
 	@Test
 	void testStructuredOutput() {
 		final JavaExample example = helloService.generateJavaExample("Write a simple JUnit 5 example.").block();

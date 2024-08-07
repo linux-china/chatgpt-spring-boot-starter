@@ -45,7 +45,7 @@ public class ChatCompletionRequest {
 	 * functions with json array
 	 */
 	private List<ChatTool> tools;
-	
+
 	@JsonProperty("response_format")
 	private ResponseFormat responseFormat;
 

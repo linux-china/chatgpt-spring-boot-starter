@@ -100,8 +100,8 @@ class ChatGPTServiceAutoConfiguration {
 				.baseUrl(baseUrl)
 				.build();
 		}
-        //noinspection removal
-        return HttpServiceProxyFactory.builder()
+		// noinspection removal
+		return HttpServiceProxyFactory.builder()
 			.clientAdapter(WebClientAdapter.forClient(client))
 			.build()
 			.createClient(OpenAIChatAPI.class);
