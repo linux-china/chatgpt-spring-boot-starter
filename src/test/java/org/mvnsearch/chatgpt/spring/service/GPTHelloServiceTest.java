@@ -55,7 +55,7 @@ class GPTHelloServiceTest extends ProjectBootBaseTest {
 
 	@Test
 	void testStructuredOutput() {
-		final JavaExample example = helloService.generateJunit5("Write a simple JUnit 5 example.").block();
+		final JavaExample example = helloService.generateJavaExample("Write a simple JUnit 5 example.").block();
 		System.out.println(example.code());
 	}
 
