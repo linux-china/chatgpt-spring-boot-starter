@@ -9,6 +9,7 @@ import org.mvnsearch.chatgpt.model.embedding.EmbeddingsResponse;
 import org.mvnsearch.chatgpt.model.function.ChatGPTJavaFunction;
 import org.mvnsearch.chatgpt.model.function.GPTFunction;
 import org.mvnsearch.chatgpt.model.function.Parameter;
+import org.mvnsearch.chatgpt.model.function.Parameters;
 import org.mvnsearch.chatgpt.spring.ChatGPTProperties;
 import org.mvnsearch.chatgpt.spring.client.ChatGPTServiceProxyFactory;
 import org.slf4j.Logger;
@@ -29,8 +30,8 @@ import java.util.List;
 
 @RegisterReflectionForBinding({ Parameter.class, GPTFunction.class, ChatCompletionRequest.class,
 		ChatCompletionResponse.class, ChatCompletionChoice.class, CompletionUsage.class, ChatMessage.class,
-		FunctionCall.class, ChatFunction.class, ChatFunction.Parameters.class, ChatFunction.JsonSchemaProperty.class,
-		ChatFunction.JsonArrayItems.class, ChatGPTJavaFunction.class, EmbeddingsRequest.class, EmbeddingsResponse.class,
+		FunctionCall.class, ChatFunction.class, Parameters.class, Parameters.JsonSchemaProperty.class,
+		Parameters.JsonArrayItems.class, ChatGPTJavaFunction.class, EmbeddingsRequest.class, EmbeddingsResponse.class,
 		CompletionRequest.class, CompletionRequest.class, CompletionResponse.class })
 @AutoConfiguration
 class ChatGPTServiceAutoConfiguration {
@@ -99,7 +100,8 @@ class ChatGPTServiceAutoConfiguration {
 				.baseUrl(baseUrl)
 				.build();
 		}
-		return HttpServiceProxyFactory.builder()
+        //noinspection removal
+        return HttpServiceProxyFactory.builder()
 			.clientAdapter(WebClientAdapter.forClient(client))
 			.build()
 			.createClient(OpenAIChatAPI.class);

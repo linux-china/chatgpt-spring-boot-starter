@@ -45,6 +45,9 @@ public class ChatCompletionRequest {
 	 * functions with json array
 	 */
 	private List<ChatTool> tools;
+	
+	@JsonProperty("response_format")
+	private ResponseFormat responseFormat;
 
 	@JsonIgnore
 	private List<String> functionNames;
@@ -161,6 +164,14 @@ public class ChatCompletionRequest {
 
 	public Object getFunctionCall() {
 		return functionCall;
+	}
+
+	public ResponseFormat getResponseFormat() {
+		return responseFormat;
+	}
+
+	public void setResponseFormat(ResponseFormat responseFormat) {
+		this.responseFormat = responseFormat;
 	}
 
 	public void setFunctionCall(Object functionCall) {

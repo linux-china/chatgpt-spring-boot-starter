@@ -15,7 +15,7 @@ public class ChatGPTJavaFunction {
 
 	private String description;
 
-	private ChatFunction.Parameters parameters;
+	private Parameters parameters;
 
 	@JsonIgnore
 	private Method javaMethod;
@@ -42,11 +42,11 @@ public class ChatGPTJavaFunction {
 		this.description = description;
 	}
 
-	public ChatFunction.Parameters getParameters() {
+	public Parameters getParameters() {
 		return parameters;
 	}
 
-	public void setParameters(ChatFunction.Parameters parameters) {
+	public void setParameters(Parameters parameters) {
 		this.parameters = parameters;
 	}
 
@@ -76,18 +76,18 @@ public class ChatGPTJavaFunction {
 
 	public void addProperty(String name, String type, String description) {
 		if (this.parameters == null) {
-			this.parameters = new ChatFunction.Parameters("object", new HashMap<>(), new ArrayList<>());
+			this.parameters = new Parameters("object", new HashMap<>(), new ArrayList<>());
 		}
-		this.parameters.getProperties().put(name, new ChatFunction.JsonSchemaProperty(name, type, description));
+		this.parameters.getProperties().put(name, new Parameters.JsonSchemaProperty(name, type, description));
 	}
 
 	public void addArrayProperty(String name, String type, String description) {
 		if (this.parameters == null) {
-			this.parameters = new ChatFunction.Parameters("object", new HashMap<>(), new ArrayList<>());
+			this.parameters = new Parameters("object", new HashMap<>(), new ArrayList<>());
 		}
 		this.parameters.getProperties()
-			.put(name, new ChatFunction.JsonSchemaProperty(name, "array", description,
-					new ChatFunction.JsonArrayItems(type, null)));
+			.put(name, new Parameters.JsonSchemaProperty(name, "array", description,
+					new Parameters.JsonArrayItems(type, null)));
 	}
 
 	public void addRequired(String name) {
