@@ -23,6 +23,7 @@ Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 * Async with Spring Webflux
 * Support ChatGPT Chat Stream
 * Support ChatGPT functions: `@GPTFunction` annotation
+* Support structured output: `@StructuredOutput` annotation for record
 * Prompt Management: load prompt templates from `prompt.properties` with `@PropertyKey`, and friendly with IntelliJ IDEA
 * Prompt as Lambda: convert prompt template to lambda expression and call it with FP style
 * ChatGPT interface: Declare ChatGPT service interface with `@ChatGPTExchange` and `@ChatCompletion` annotations.
@@ -204,6 +205,28 @@ public class ChatGPTServiceImplTest {
 
 If you want to have a simple test for ChatGPT functions, you can install [ChatGPT with Markdown JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown),
 and take a look at [chat.gpt file](./chat.gpt).
+       
+# Structured Output
+
+Please refer [OpenAI Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs) for detail.
+
+First you need to define record for structured output:
+
+```java
+@StructuredOutput(name = "java_example")
+public record JavaExample(@Parameter("explanation") String explanation, @Parameter("answer") String answer,
+		@Parameter("code") String code, @Parameter("dependencies") List<String> dependencies) {
+}
+```
+
+Then you can use structured output record as return type as following:
+
+```java
+    @ChatCompletion(system = "You are a helpful Java language assistant.")
+   	Mono<JavaExample> generateJavaExample(String question);
+```
+
+**Attention**: if the return type is not `Mono<String>`, and it means structured output.
 
 # Prompt Templates
 
