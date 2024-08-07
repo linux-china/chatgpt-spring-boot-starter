@@ -16,6 +16,8 @@ public class ChatMessage {
 	private ChatMessageRole role;
 
 	private String content;
+	
+	private String refusal;
 
 	/**
 	 * the name of the author of this message
@@ -47,6 +49,14 @@ public class ChatMessage {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public String getRefusal() {
+		return refusal;
+	}
+
+	public void setRefusal(String refusal) {
+		this.refusal = refusal;
 	}
 
 	public String getName() {
