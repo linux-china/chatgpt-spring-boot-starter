@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mvnsearch.chatgpt.model.completion.chat.ResponseFormatJsonSchema;
+import org.mvnsearch.chatgpt.model.output.StructuredOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -27,6 +29,22 @@ public class GPTFunctionUtils {
 	public static final ObjectMapper objectMapper = new ObjectMapper()//
 		.configure(FAIL_ON_UNKNOWN_PROPERTIES, false)//
 		.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+	public static ResponseFormatJsonSchema extractOutputJsonSchema(Class<?> clazz) throws Exception {
+		ResponseFormatJsonSchema jsonSchema = new ResponseFormatJsonSchema();
+		jsonSchema.setName(clazz.getSimpleName());
+		final StructuredOutput structuredOutput = clazz.getAnnotation(StructuredOutput.class);
+		if (structuredOutput != null) {
+			if (!structuredOutput.name().isEmpty()) {
+				jsonSchema.setName(structuredOutput.name());
+			}
+			if (!structuredOutput.description().isEmpty()) {
+				jsonSchema.setDescription(structuredOutput.description());
+			}
+			jsonSchema.setSchema(extractParameters(clazz));
+		}
+		return jsonSchema;
+	}
 
 	/**
 	 * Extract GPT functions from class (and all parent classes/interfaces) by scanning
@@ -70,44 +88,52 @@ public class GPTFunctionUtils {
 				gptJavaFunction.setDescription(gptFunctionAnnotation.value());
 				Class<?> requestClazz = method.getParameterTypes()[0];
 				gptJavaFunction.setParameterType(requestClazz);
-				for (Field field : requestClazz.getDeclaredFields()) {
-					Parameter functionParamAnnotation = field.getAnnotation(Parameter.class);
-					if (functionParamAnnotation != null) {
-						String fieldName = functionParamAnnotation.name();
-						String fieldType = getJsonSchemaType(field.getType());
-						if (fieldName.isEmpty()) {
-							fieldName = field.getName();
-						}
-						if (fieldType.equals("array")) {
-							Class<?> actualClazz = parseArrayItemClass(field.getGenericType());
-							gptJavaFunction.addArrayProperty(fieldName, getJsonSchemaType(actualClazz),
-									functionParamAnnotation.value());
-						} //
-						else if (fieldType.equals("object")) {
-							throw new Exception(
-									"Object type not supported: " + clazz.getName() + "." + field.getName());
-						} //
-						else {
-							gptJavaFunction.addProperty(fieldName, fieldType, functionParamAnnotation.value());
-						}
-						if (functionParamAnnotation.required()) {
-							gptJavaFunction.addRequired(fieldName);
-						} //
-						else {
-							for (Annotation annotation : field.getAnnotations()) {
-								final String annotationName = annotation.annotationType().getName().toLowerCase();
-								if (annotationName.endsWith("nonnull")) {
-									gptJavaFunction.addRequired(fieldName);
-									break;
-								}
-							}
-						}
-					}
-				}
+				gptJavaFunction.setParameters(extractParameters(requestClazz));
 				functionDeclares.put(functionName, gptJavaFunction);
 			}
 		}
 		return functionDeclares;
+	}
+
+	private static Parameters extractParameters(Class<?> clazz) throws Exception {
+		Parameters parameters = new Parameters("object", new HashMap<>(), new ArrayList<>());
+		for (Field field : clazz.getDeclaredFields()) {
+			Parameter functionParamAnnotation = field.getAnnotation(Parameter.class);
+			if (functionParamAnnotation != null) {
+				String fieldName = functionParamAnnotation.name();
+				String fieldType = getJsonSchemaType(field.getType());
+				String fieldDescription = functionParamAnnotation.value();
+				if (fieldName.isEmpty()) {
+					fieldName = field.getName();
+				}
+				if (fieldType.equals("array")) {
+					Class<?> actualClazz = parseArrayItemClass(field.getGenericType());
+					parameters.getProperties()
+						.put(fieldName,
+								new Parameters.JsonSchemaProperty(fieldName, "array", fieldDescription,
+										new Parameters.JsonArrayItems(getJsonSchemaType(actualClazz), null)));
+				} //
+				else if (fieldType.equals("object")) {
+					throw new Exception("Object type not supported: " + clazz.getName() + "." + field.getName());
+				} //
+				else {
+					parameters.getProperties().put(fieldName, new Parameters.JsonSchemaProperty(fieldName, fieldType, fieldDescription));
+				}
+				if (functionParamAnnotation.required()) {
+					parameters.getRequired().add(fieldName);
+				} //
+				else {
+					for (Annotation annotation : field.getAnnotations()) {
+						final String annotationName = annotation.annotationType().getName().toLowerCase();
+						if (annotationName.endsWith("nonnull")) {
+							parameters.getRequired().add(fieldName);
+							break;
+						}
+					}
+				}
+			}
+		}
+		return parameters;
 	}
 
 	public static Set<Class<?>> getAllClassesInType(Class<?> clazz) {
