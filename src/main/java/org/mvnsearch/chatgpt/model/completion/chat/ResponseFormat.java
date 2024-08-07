@@ -30,4 +30,10 @@ public class ResponseFormat {
 		this.jsonSchema = jsonSchema;
 	}
 
+	public static ResponseFormat jsonSchema(ResponseFormatJsonSchema jsonSchema) {
+		ResponseFormat responseFormat = new ResponseFormat();
+		responseFormat.setJsonSchema(jsonSchema);
+		return responseFormat;
+	}
+
 }
