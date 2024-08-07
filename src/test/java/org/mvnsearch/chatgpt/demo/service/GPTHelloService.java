@@ -29,4 +29,7 @@ public interface GPTHelloService {
 	@ChatCompletion(userTemplate = "translate")
 	Mono<String> translateFromTemplate(String sourceLanguage, String targetLanguage, String text);
 
+	@ChatCompletion(system = "You are a helpful Java language assistant.")
+	Mono<JavaExample> generateJunit5(String question);
+
 }
