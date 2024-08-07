@@ -2,6 +2,7 @@ package org.mvnsearch.chatgpt.model.completion.chat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mvnsearch.chatgpt.model.CompletionUsage;
+import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -100,6 +101,24 @@ public class ChatCompletionResponse {
 			}
 		}
 		return sb.toString();
+	}
+
+	@JsonIgnore
+	public <T> T getStructuredOutput(Class<T> clazz) throws Exception {
+		if (isEmpty())
+			return null;
+		String jsonContent = "";
+		for (ChatCompletionChoice choice : choices) {
+			final ChatMessage message = choice.getMessage();
+			if (message != null && message.getContent() != null) {
+				jsonContent = message.getContent();
+				break;
+			}
+		}
+		if (!jsonContent.startsWith("{")) {
+			throw new Exception("No structured output found");
+		}
+		return GPTFunctionUtils.objectMapper.readValue(jsonContent, clazz);
 	}
 
 	@JsonIgnore
