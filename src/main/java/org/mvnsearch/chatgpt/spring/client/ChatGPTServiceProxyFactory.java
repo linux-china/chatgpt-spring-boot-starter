@@ -5,9 +5,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.mvnsearch.chatgpt.model.ChatCompletion;
 import org.mvnsearch.chatgpt.model.Completion;
 import org.mvnsearch.chatgpt.model.GPTExchange;
-import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionRequest;
-import org.mvnsearch.chatgpt.model.completion.chat.ChatCompletionResponse;
-import org.mvnsearch.chatgpt.model.completion.chat.ChatMessage;
+import org.mvnsearch.chatgpt.model.completion.chat.*;
 import org.mvnsearch.chatgpt.model.completion.completion.CompletionRequest;
 import org.mvnsearch.chatgpt.model.completion.completion.CompletionResponse;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
@@ -31,11 +29,14 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class ChatGPTServiceProxyFactory {
@@ -179,8 +180,63 @@ class GPTExchangeMethodInterceptor implements MethodInterceptor {
 			return chatGPTService.chat(request).flatMap(ChatCompletionResponse::getReplyCombinedText);
 		}
 		else {
-			return chatGPTService.chat(request).map(ChatCompletionResponse::getReplyText);
+			final Class<?> outputClass = parseInferredClass(method.getGenericReturnType());
+			final boolean isStructuredOutput = !outputClass.equals(String.class);
+			if (isStructuredOutput) {
+				final ResponseFormatJsonSchema jsonSchema = GPTFunctionUtils.extractOutputJsonSchema(outputClass);
+				request.setResponseFormat(ResponseFormat.jsonSchema(jsonSchema));
+			}
+			if (isStructuredOutput) {
+				return chatGPTService.chat(request)
+					.map((Function<ChatCompletionResponse, Object>) chatCompletionResponse -> {
+						try {
+							return chatCompletionResponse.getStructuredOutput(outputClass);
+						}
+						catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					});
+			}
+			else {
+				return chatGPTService.chat(request).map(ChatCompletionResponse::getReplyText);
+			}
 		}
+	}
+
+	public static Class<?> parseInferredClass(Type genericType) {
+		Class<?> inferredClass = null;
+		if (genericType instanceof ParameterizedType) {
+			ParameterizedType type = (ParameterizedType) genericType;
+			Type[] typeArguments = type.getActualTypeArguments();
+			if (typeArguments.length > 0) {
+				final Type typeArgument = typeArguments[0];
+				if (typeArgument instanceof ParameterizedType) {
+					inferredClass = (Class<?>) ((ParameterizedType) typeArgument).getActualTypeArguments()[0];
+				}
+				else if (typeArgument instanceof Class) {
+					inferredClass = (Class<?>) typeArgument;
+				}
+				else {
+					String typeName = typeArgument.getTypeName();
+					if (typeName.contains(" ")) {
+						typeName = typeName.substring(typeName.lastIndexOf(" ") + 1);
+					}
+					if (typeName.contains("<")) {
+						typeName = typeName.substring(0, typeName.indexOf("<"));
+					}
+					try {
+						inferredClass = Class.forName(typeName);
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		if (inferredClass == null && genericType instanceof Class) {
+			inferredClass = (Class<?>) genericType;
+		}
+		return inferredClass;
 	}
 
 }
