@@ -214,8 +214,10 @@ First you need to define record for structured output:
 
 ```java
 @StructuredOutput(name = "java_example")
-public record JavaExample(@Parameter("explanation") String explanation, @Parameter("answer") String answer,
-		@Parameter("code") String code, @Parameter("dependencies") List<String> dependencies) {
+public record JavaExample(@Nonnull @Parameter("explanation") String explanation,
+		@Nonnull @Parameter("answer") String answer,
+        @Nonnull @Parameter("code") String code,
+		@Nonnull @Parameter("dependencies") List<String> dependencies) {
 }
 ```
 
