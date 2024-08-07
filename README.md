@@ -42,7 +42,7 @@ Add `chatgpt-spring-boot-starter` dependency in your pom.xml.
 <dependency>
     <groupId>org.mvnsearch</groupId>
     <artifactId>chatgpt-spring-boot-starter</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
 </dependency>
 ```
 
