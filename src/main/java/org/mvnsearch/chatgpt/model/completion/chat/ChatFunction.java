@@ -47,6 +47,7 @@ public class ChatFunction {
 		private Map<String, JsonSchemaProperty> properties;
 
 		private List<String> required;
+		private boolean additionalProperties = false;
 
 		public Parameters() {
 		}
@@ -81,6 +82,13 @@ public class ChatFunction {
 			this.required = required;
 		}
 
+		public boolean isAdditionalProperties() {
+			return additionalProperties;
+		}
+
+		public void setAdditionalProperties(boolean additionalProperties) {
+			this.additionalProperties = additionalProperties;
+		}
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
