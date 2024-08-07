@@ -3,6 +3,7 @@ package org.mvnsearch.chatgpt.spring.service;
 import org.junit.jupiter.api.Test;
 import org.mvnsearch.chatgpt.demo.ProjectBootBaseTest;
 import org.mvnsearch.chatgpt.demo.service.GPTHelloService;
+import org.mvnsearch.chatgpt.demo.service.JavaExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
@@ -49,6 +50,13 @@ class GPTHelloServiceTest extends ProjectBootBaseTest {
 		StepVerifier.create(helloService.translateFromTemplate("Chinese", "English", "你好！"))
 			.expectNextMatches(result -> result.toLowerCase(Locale.ENGLISH).contains("hello"))
 			.verifyComplete();
+	}
+
+
+	@Test
+	void testStructuredOutput() {
+		final JavaExample example = helloService.generateJunit5("Write a simple JUnit 5 example.").block();
+		System.out.println(example.code());
 	}
 
 }
