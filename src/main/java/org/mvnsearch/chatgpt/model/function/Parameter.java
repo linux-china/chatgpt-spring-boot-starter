@@ -11,6 +11,6 @@ public @interface Parameter {
 
 	String name() default "";
 
-	boolean required() default false;
+	boolean required() default true;
 
 }
