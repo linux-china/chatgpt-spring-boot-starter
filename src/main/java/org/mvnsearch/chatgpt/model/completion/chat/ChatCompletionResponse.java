@@ -108,15 +108,22 @@ public class ChatCompletionResponse {
 		if (isEmpty())
 			return null;
 		String jsonContent = "";
+		String refusal = null;
 		for (ChatCompletionChoice choice : choices) {
 			final ChatMessage message = choice.getMessage();
-			if (message != null && message.getContent() != null) {
-				jsonContent = message.getContent();
-				break;
+			if (message != null) {
+				if (message.getContent() != null) {
+					jsonContent = message.getContent();
+					break;
+				}
+				if (message.getRefusal() != null) {
+					refusal = message.getRefusal();
+				}
 			}
+
 		}
 		if (!jsonContent.startsWith("{")) {
-			throw new Exception("No structured output found");
+			throw new Exception("No structured output found: " + refusal);
 		}
 		return GPTFunctionUtils.objectMapper.readValue(jsonContent, clazz);
 	}
