@@ -162,3 +162,60 @@ Content-Type: application/json
     }
   ]
 }
+
+### json structure output
+POST https://api.openai.com/v1/chat/completions
+Authorization: Bearer {{OPENAI_API_KEY}}
+Content-Type: application/json
+
+{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful Java language assistant."
+    },
+    {
+      "role": "user",
+      "content": "Write a simple JUnit 5 example."
+    }
+  ],
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "JavaExample",
+      "strict": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "explanation": {
+            "type": "string",
+            "description": "The explanation for answer."
+          },
+          "answer": {
+            "type": "string",
+            "description": "The final answer."
+          },
+          "code": {
+            "type": "string",
+            "description": "The generated code within the answer."
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The dependencies for the generated code."
+          }
+        },
+        "required": [
+          "explanation",
+          "answer",
+          "code",
+          "dependencies"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}
