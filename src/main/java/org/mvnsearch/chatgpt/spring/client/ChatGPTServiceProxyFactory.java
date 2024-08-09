@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class ChatGPTServiceProxyFactory {
@@ -186,15 +185,14 @@ class GPTExchangeMethodInterceptor implements MethodInterceptor {
 				request.setResponseFormat(ResponseFormat.jsonSchema(jsonSchema));
 			}
 			if (isStructuredOutput) {
-				return chatGPTService.chat(request)
-					.map((Function<ChatCompletionResponse, Object>) chatCompletionResponse -> {
-						try {
-							return chatCompletionResponse.getStructuredOutput(outputClass);
-						}
-						catch (Exception e) {
-							throw new RuntimeException(e);
-						}
-					});
+				return chatGPTService.chat(request).handle((response, sink) -> {
+					try {
+						sink.next(response.getStructuredOutput(outputClass));
+					}
+					catch (Exception e) {
+						sink.error(e);
+					}
+				});
 			}
 			else {
 				return chatGPTService.chat(request).map(ChatCompletionResponse::getReplyText);
