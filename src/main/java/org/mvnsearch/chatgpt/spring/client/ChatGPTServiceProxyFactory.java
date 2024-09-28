@@ -115,6 +115,9 @@ class GPTExchangeMethodInterceptor implements MethodInterceptor {
 			functions = chatCompletionAnnotation.functions();
 			// user message
 			String userMessage = chatCompletionAnnotation.value();
+			if (userMessage.isEmpty()) {
+				userMessage = chatCompletionAnnotation.user();
+			}
 			if (userMessage.isEmpty() && !chatCompletionAnnotation.userTemplate().isEmpty()) {
 				userMessage = promptManager.prompt(chatCompletionAnnotation.userTemplate(), args);
 			}
