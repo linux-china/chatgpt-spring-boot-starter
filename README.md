@@ -52,7 +52,7 @@ Add `openai.api.key` in `application.properties`:
 
 ```properties
 # OpenAI API Token, or you can set environment variable OPENAI_API_KEY
-openai.api.key=sk-xxxx
+openai.api.key=sk-proj-xxxx
 ```
 
 If you want to use Azure OpenAI, you can add `openai.api.url` in `application.properties`:
@@ -226,6 +226,9 @@ Then you can use structured output record as return type as following:
 ```java
     @ChatCompletion(system = "You are a helpful Java language assistant.")
    	Mono<JavaExample> generateJavaExample(String question);
+    
+    @ChatCompletion(system = "You are a helpful assistant.", user = "Say hello to {0}!")
+	Mono<String> hello(String word);
 ```
 
 **Attention**: if the return type is not `Mono<String>`, and it means structured output.
