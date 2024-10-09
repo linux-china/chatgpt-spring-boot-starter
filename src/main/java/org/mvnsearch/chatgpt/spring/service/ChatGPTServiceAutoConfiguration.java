@@ -83,6 +83,15 @@ class ChatGPTServiceAutoConfiguration {
 			.createClient(OpenAIFileAPI.class);
 	}
 
+	@Bean
+	OpenAIBatchAPI openAIBatchAPI(ChatGPTProperties properties) throws Exception {
+		// noinspection removal
+		return HttpServiceProxyFactory.builder()
+			.clientAdapter(WebClientAdapter.forClient(openAIWebClient(properties)))
+			.build()
+			.createClient(OpenAIBatchAPI.class);
+	}
+
 	private WebClient openAIWebClient(ChatGPTProperties properties) throws Exception {
 		String openaiApiKey = properties.api().key();
 		String openaiApiUrl = StringUtils.hasText(properties.api().url()) ? properties.api().url()
