@@ -16,7 +16,6 @@ ChatGPT Spring Boot Starter
 
 Spring Boot ChatGPT starter with ChatGPT chat and functions support.
 
-
 # Features
 
 * Base on Spring Boot 3.0+
@@ -87,7 +86,8 @@ public class ChatRobotController {
 
 # ChatGPT Service Interface
 
-ChatGPT service interface is almost like [Spring 6 HTTP Interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface).
+ChatGPT service interface is almost
+like [Spring 6 HTTP Interface](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html#rest-http-interface).
 You can declare a ChatGPT service interface with `@ChatGPTExchange` annotation, and declare completion methods
 with `@ChatCompletion` annotation, then you just call service interface directly.
 
@@ -101,10 +101,10 @@ public interface GPTHelloService {
 
     @ChatCompletion("You are a language translator, please translate the below text from {0} to {1}.\n {2}")
     Mono<String> translate(String sourceLanguage, String targetLanguage, String text);
-  
+
     @Completion("please complete poem: {0}")
-  	Mono<String> completePoem(String text);
-    
+    Mono<String> completePoem(String text);
+
 }
 ```
 
@@ -201,11 +201,12 @@ public class ChatGPTServiceImplTest {
 * Spam detection: email spam, advertisement spam etc
 * PipeLine: you can think function as a node in pipeline. After process by function, and you can pass it to ChatGPT
   again.
-* Data types supported: `string`, `number`, `integer`, `array`.  Nested `object` not supported now! 
+* Data types supported: `string`, `number`, `integer`, `array`. Nested `object` not supported now!
 
-If you want to have a simple test for ChatGPT functions, you can install [ChatGPT with Markdown JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown),
+If you want to have a simple test for ChatGPT functions, you can
+install [ChatGPT with Markdown JetBrains IDE Plugin](https://plugins.jetbrains.com/plugin/21671-chatgpt-with-markdown),
 and take a look at [chat.gpt file](./chat.gpt).
-       
+
 # Structured Output
 
 Please refer [OpenAI Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs) for detail.
@@ -213,22 +214,24 @@ Please refer [OpenAI Structured Outputs](https://platform.openai.com/docs/guides
 First you need to define record for structured output:
 
 ```java
+
 @StructuredOutput(name = "java_example")
 public record JavaExample(@Nonnull @Parameter("explanation") String explanation,
-		@Nonnull @Parameter("answer") String answer,
-        @Nonnull @Parameter("code") String code,
-		@Nonnull @Parameter("dependencies") List<String> dependencies) {
+                          @Nonnull @Parameter("answer") String answer,
+                          @Nonnull @Parameter("code") String code,
+                          @Nonnull @Parameter("dependencies") List<String> dependencies) {
 }
 ```
 
 Then you can use structured output record as return type as following:
 
 ```java
-    @ChatCompletion(system = "You are a helpful Java language assistant.")
-   	Mono<JavaExample> generateJavaExample(String question);
-    
-    @ChatCompletion(system = "You are a helpful assistant.", user = "Say hello to {0}!")
-	Mono<String> hello(String word);
+
+@ChatCompletion(system = "You are a helpful Java language assistant.")
+Mono<JavaExample> generateJavaExample(String question);
+
+@ChatCompletion(system = "You are a helpful assistant.", user = "Say hello to {0}!")
+Mono<String> hello(String word);
 ```
 
 **Attention**: if the return type is not `Mono<String>`, and it means structured output.
@@ -245,7 +248,8 @@ Tips:
 
 * Prompt template code completion: support by `@PropertyKey(resourceBundle = PROMPTS_FQN)`
 * `@ChatCompletion` annotation has built-in prompt template support for `user`,`system` and `assistant` messages.
-* Prompt value could be from classpath and URL: `conversation=classpath:///conversation-prompt.txt` or `conversation=https://example.com/conversation-prompt.txt`
+* Prompt value could be from classpath and URL: `conversation=classpath:///conversation-prompt.txt` or
+  `conversation=https://example.com/conversation-prompt.txt`
 
 ### Prompt Template as Lambda
 
@@ -285,6 +289,34 @@ public class PromptTest {
 }
 ```
 
+# [Batch API](https://platform.openai.com/docs/guides/batch)
+
+- Convert multi requests to JSONL format
+- Upload JSONL file to OpenAI
+- Create batch with file id
+
+```
+	@Autowired
+	private OpenAIFileAPI openAIFileAPI;
+
+	@Autowired
+	private OpenAIBatchAPI openAIBatchAPI;
+
+	@Test
+	public void testUpload() {
+		String jsonl = Stream.of("What's Java Language?", "What's Kotlin Language?")
+			.map(ChatCompletionRequest::of)
+			.map(ChatCompletionBatchRequest::new)
+			.map(this::toJson)
+			.filter(Strings::isNotBlank)
+			.collect(Collectors.joining("\n"));
+		Resource resource = new ByteArrayResource(jsonl.getBytes());
+		FileObject fileObject = openAIFileAPI.upload("batch", resource).block();
+		CreateBatchRequest createBatchRequest = new CreateBatchRequest(fileObject.getId());
+		BatchObject batchObject = openAIBatchAPI.create(createBatchRequest).block();
+	}
+```
+
 # FAQ
 
 ### OpenAI REST API proxy
@@ -311,9 +343,11 @@ Of course, you can use standard URL `http://localhost:8080/v1/chat/completions` 
 
 Now ChatGPT starter use Reactive style API, and you know Reactive still hard to understand.
 Could ChatGPT starter work with Spring Web? Yes, you can use `Mono` or `Flux` with Spring Web and Virtual Threads,
-please refer [Support for Virtual Threads on Spring Boot 3.2](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes#support-for-virtual-threads) for details.
+please
+refer [Support for Virtual Threads on Spring Boot 3.2](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes#support-for-virtual-threads)
+for details.
 
-# Building the Code 
+# Building the Code
 
 The code uses the Spring Java Formatter Maven plugin, which keeps the code consistent. In order to build the code, run:
 
@@ -321,7 +355,8 @@ The code uses the Spring Java Formatter Maven plugin, which keeps the code consi
 ./mvnw spring-javaformat:apply
 ```
 
-This will ensure that all contributions have the exact same code formatting, allowing us to focus on bigger issues, like functionality,
+This will ensure that all contributions have the exact same code formatting, allowing us to focus on bigger issues, like
+functionality,
 
 # References
 
