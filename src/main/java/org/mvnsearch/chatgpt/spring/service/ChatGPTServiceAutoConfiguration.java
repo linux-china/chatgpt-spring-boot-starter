@@ -66,6 +66,24 @@ class ChatGPTServiceAutoConfiguration {
 
 	@Bean
 	OpenAIChatAPI openAIChatAPI(ChatGPTProperties properties) throws Exception {
+		// noinspection removal
+		return HttpServiceProxyFactory.builder()
+			.clientAdapter(WebClientAdapter.forClient(openAIWebClient(properties)))
+			.build()
+			.createClient(OpenAIChatAPI.class);
+
+	}
+
+	@Bean
+	OpenAIFileAPI openAIFileAPI(ChatGPTProperties properties) throws Exception {
+		// noinspection removal
+		return HttpServiceProxyFactory.builder()
+			.clientAdapter(WebClientAdapter.forClient(openAIWebClient(properties)))
+			.build()
+			.createClient(OpenAIFileAPI.class);
+	}
+
+	private WebClient openAIWebClient(ChatGPTProperties properties) throws Exception {
 		String openaiApiKey = properties.api().key();
 		String openaiApiUrl = StringUtils.hasText(properties.api().url()) ? properties.api().url()
 				: "https://api.openai.com/v1";
@@ -100,12 +118,7 @@ class ChatGPTServiceAutoConfiguration {
 				.baseUrl(baseUrl)
 				.build();
 		}
-		// noinspection removal
-		return HttpServiceProxyFactory.builder()
-			.clientAdapter(WebClientAdapter.forClient(client))
-			.build()
-			.createClient(OpenAIChatAPI.class);
-
+		return client;
 	}
 
 }
