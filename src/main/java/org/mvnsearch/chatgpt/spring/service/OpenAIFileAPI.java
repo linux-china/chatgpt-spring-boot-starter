@@ -19,19 +19,19 @@ import reactor.core.publisher.Mono;
  */
 public interface OpenAIFileAPI {
 
-	@PostExchange("/v1/files")
+	@PostExchange("/files")
 	Mono<FileObject> upload(@RequestPart("purpose") String purpose, @RequestPart("file") Resource file);
 
-	@GetExchange("/v1/files")
+	@GetExchange("/files")
 	Mono<ListFilesResponse> list();
 
-	@GetExchange("/v1/files/{file_id}")
+	@GetExchange("/files/{file_id}")
 	Mono<FileObject> retrieve(@PathVariable("file_id") String fileId);
 
-	@DeleteExchange("/v1/files/{file_id}")
+	@DeleteExchange("/files/{file_id}")
 	Mono<DeleteFileResponse> delete(@PathVariable("file_id") String fileId);
 
-	@GetExchange("v1/files/{file_id}/content")
+	@GetExchange("/files/{file_id}/content")
 	Mono<byte[]> content(@PathVariable("file_id") String fileId);
 
 }
