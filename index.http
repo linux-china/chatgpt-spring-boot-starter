@@ -219,3 +219,51 @@ Content-Type: application/json
     }
   }
 }
+
+### upload file
+POST https://api.openai.com/v1/files
+Authorization: Bearer {{OPENAI_API_KEY}}
+Content-Type: multipart/form-data; boundary=------------------------Hg47Ik2BAtgKLgDYJbINed
+
+--------------------------Hg47Ik2BAtgKLgDYJbINed
+Content-Disposition: form-data; name="purpose"
+
+batch
+--------------------------Hg47Ik2BAtgKLgDYJbINed
+Content-Disposition: form-data; name="file"; filename="batch-requests.jsonl"
+Content-Type: application/octet-stream
+
+{"custom_id": "request-1", "method": "POST", "url": "/v1/chat/completions", "body": {"model": "gpt-4o-mini", "messages": [{"role": "system", "content": "You are a helpful IT assistant."},{"role": "user", "content": "What is Java language?"}],"max_tokens": 1000}}
+{"custom_id": "request-2", "method": "POST", "url": "/v1/chat/completions", "body": {"model": "gpt-4o-mini", "messages": [{"role": "system", "content": "You are an helpful IT assistant."},{"role": "user", "content": "What is Kotlin language?"}],"max_tokens": 1000}}
+--------------------------Hg47Ik2BAtgKLgDYJbINed--
+
+### list files
+GET https://api.openai.com/v1/files
+Authorization: Bearer {{OPENAI_API_KEY}}
+
+### retrieve file
+GET https://api.openai.com/v1/files/{{FILE_ID}}
+Authorization: Bearer {{OPENAI_API_KEY}}
+
+### get file content
+GET https://api.openai.com/v1/files/{{FILE_ID}}/content
+Authorization: Bearer {{OPENAI_API_KEY}}
+
+### submit batch
+POST https://api.openai.com/v1/batches
+Authorization: Bearer {{OPENAI_API_KEY}}
+Content-Type: application/json
+
+{
+  "input_file_id": "{{FILE_ID}}",
+  "endpoint": "/v1/chat/completions",
+  "completion_window": "24h"
+}
+
+### check batch status
+GET https://api.openai.com/v1/batches/{{BATCH_ID}}
+Authorization: Bearer {{OPENAI_API_KEY}}
+
+### get batch result: jsonl
+GET https://api.openai.com/v1/files/{{BATCH_OUTPUT_FILE_ID}}/content
+Authorization: Bearer {{OPENAI_API_KEY}}
