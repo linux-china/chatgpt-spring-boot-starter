@@ -60,6 +60,13 @@ public class OpenAIFileAPITest extends ProjectBootBaseTest {
 		System.out.println(fileObject.getId());
 	}
 
+	@Test
+	public void testRetrieveContent() {
+		final byte[] content = openAIFileAPI.content("file-hvSA7nhEIHbAfDww72qssk3k").block();
+		assertThat(content).isNotEmpty();
+		System.out.println(new String(content));
+	}
+
 	private String toJson(ChatCompletionBatchRequest request) {
 		try {
 			return objectMapper.writeValueAsString(request);
