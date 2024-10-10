@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * List files response
- * 
+ *
  * @author linux_china
  */
 public class ListFilesResponse {
@@ -28,4 +28,5 @@ public class ListFilesResponse {
 	public void setObject(String object) {
 		this.object = object;
 	}
+
 }

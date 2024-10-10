@@ -2,7 +2,7 @@ package org.mvnsearch.chatgpt.model.file;
 
 /**
  * delete file response
- * 
+ *
  * @author linux_china
  */
 public class DeleteFileResponse {
@@ -36,4 +36,5 @@ public class DeleteFileResponse {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
+
 }

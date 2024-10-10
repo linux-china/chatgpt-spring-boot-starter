@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * File object
- * 
+ *
  * @author linux_china
  */
 public class FileObject {
@@ -69,4 +69,5 @@ public class FileObject {
 	public void setPurpose(String purpose) {
 		this.purpose = purpose;
 	}
+
 }
