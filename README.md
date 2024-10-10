@@ -317,6 +317,20 @@ public class PromptTest {
 	}
 ```
 
+After `completion_window(24h)`, and you can call `openAIBatchAPI.retrieve(batchId)` to get the `BatchObject`.
+Get `BatchObject.outputFileId` and call `OpenAIFileAPI.retrieve(outputFileId)` to get jsonl response,
+and use follow code to parse every chat response.
+
+```
+List<String> lines = new BufferedReader(new InputStreamReader(inputStream)).lines().toList();
+for (String line : lines) {
+	if (line.startsWith("{")) {
+		ChatCompletionBatchResponse response = objectMapper.readValue(line, ChatCompletionBatchResponse.class);
+		System.out.println(response.getCustomId());
+	}
+}
+```
+
 # FAQ
 
 ### OpenAI REST API proxy
