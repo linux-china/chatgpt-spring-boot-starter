@@ -1,6 +1,7 @@
 package org.mvnsearch.chatgpt.model.completion.chat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mvnsearch.chatgpt.model.CompletionUsage;
 import org.mvnsearch.chatgpt.model.function.GPTFunctionUtils;
 import reactor.core.publisher.Flux;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatCompletionResponse {
 
 	private String id;
