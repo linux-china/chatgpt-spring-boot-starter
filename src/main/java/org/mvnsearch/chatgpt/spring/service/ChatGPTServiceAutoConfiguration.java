@@ -54,9 +54,13 @@ class ChatGPTServiceAutoConfiguration {
 	}
 
 	@Bean
-	ChatGPTService chatGPTService(OpenAIChatAPI openAIChatAPI, PromptManager promptManager,
-			GPTFunctionRegistry registry) throws Exception {
-		return new ChatGPTServiceImpl(openAIChatAPI, promptManager, registry);
+	ChatGPTService chatGPTService(ChatGPTProperties properties, OpenAIChatAPI openAIChatAPI,
+			PromptManager promptManager, GPTFunctionRegistry registry) throws Exception {
+		final ChatGPTServiceImpl chatGPTService = new ChatGPTServiceImpl(openAIChatAPI, promptManager, registry);
+		if (properties.model() != null) {
+			chatGPTService.setModel(properties.model());
+		}
+		return chatGPTService;
 	}
 
 	@Bean
