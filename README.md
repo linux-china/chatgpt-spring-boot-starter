@@ -332,6 +332,14 @@ for (String line : lines) {
 ```
 
 # FAQ
+            
+### How to integrate with DeepSeek?
+
+```properties
+openai.api.url=https://api.deepseek.com/v1
+openai.api.key=sk-xxxx
+openai.model=deepseek-chat
+```
 
 ### OpenAI REST API proxy
 
