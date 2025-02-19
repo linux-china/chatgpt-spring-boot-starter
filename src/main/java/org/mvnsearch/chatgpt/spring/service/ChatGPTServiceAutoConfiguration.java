@@ -72,7 +72,7 @@ class ChatGPTServiceAutoConfiguration {
 	OpenAIChatAPI openAIChatAPI(ChatGPTProperties properties) throws Exception {
 		// noinspection removal
 		return HttpServiceProxyFactory.builder()
-			.clientAdapter(WebClientAdapter.forClient(openAIWebClient(properties)))
+			.exchangeAdapter(WebClientAdapter.create(openAIWebClient(properties)))
 			.build()
 			.createClient(OpenAIChatAPI.class);
 
@@ -82,7 +82,7 @@ class ChatGPTServiceAutoConfiguration {
 	OpenAIFileAPI openAIFileAPI(ChatGPTProperties properties) throws Exception {
 		// noinspection removal
 		return HttpServiceProxyFactory.builder()
-			.clientAdapter(WebClientAdapter.forClient(openAIWebClient(properties)))
+			.exchangeAdapter(WebClientAdapter.create(openAIWebClient(properties)))
 			.build()
 			.createClient(OpenAIFileAPI.class);
 	}
@@ -91,7 +91,7 @@ class ChatGPTServiceAutoConfiguration {
 	OpenAIBatchAPI openAIBatchAPI(ChatGPTProperties properties) throws Exception {
 		// noinspection removal
 		return HttpServiceProxyFactory.builder()
-			.clientAdapter(WebClientAdapter.forClient(openAIWebClient(properties)))
+			.exchangeAdapter(WebClientAdapter.create(openAIWebClient(properties)))
 			.build()
 			.createClient(OpenAIBatchAPI.class);
 	}
